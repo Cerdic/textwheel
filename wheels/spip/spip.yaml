@@ -1,0 +1,49 @@
+--- # Syntaxe des raccourcis SPIP, version 0.0.1
+    #
+    # Si on nomme une regle, elle devient surchargeable
+
+spip-alinea:
+    match: [ "/\n(----+|____+)/S", "/\n-- */S", "/\n- */S", "/\n_ +/S" ]
+    replace: [ "\n\n\n<hr class='spip' />\n\n\n", "\n<br />&mdash;&nbsp;", "\n<br /><img src='squelettes-dist/puce.gif' width='8' height='11' class='puce' alt='-' />&nbsp;", "\n<br />" ]
+    if_chars: "\n"
+    priority: -20 # avant !spip-paragraphes
+
+spip-accolades:
+  # raccourcis en {..}
+  # intertitres, strong, italiques
+  match: ['/(^|[^{])[{][{][{]/S', '/[}][}][}]($|[^}])/S', '/[{][{]/S', '/[}][}]/S', '/[{]/S', '/[}]/S']
+  replace: ["$1\n\n\n<h3 class=\"spip\">", "</h3>\n\n\n$1", '<strong>', '</strong>', '<i>', '</i>']
+  if_chars: '{'
+
+spip-paragraphes:
+  # paragraphes
+  # lignes vides consecutives, br imbriques dans des p
+  match: ["/(( *)\n){2,}(<br\s*\/?>)?/S", '/(?:<br\s*\/?>){2,}/S', "/<p>\n*(?:<br\s*\/?>\n*)*/S"]
+  replace: ['<p>', '<p>', '<p>']
+  priority: 0
+
+quote-intro:
+  # raccourci <quote>
+  # + suppression de <intro>
+  match: ['<quote>', '</quote>', '<intro>', '</intro>']
+  replace: ['<blockquote class="spip"><p>', '</blockquote><p>', '', '']
+  if_chars: '<'
+  type: str
+
+-
+  # eliminer les br restant en debut de texte
+  match: '@^\n<br />@S'
+  replace: ''
+  if_chars: "\n"
+  priority: 10 # apres !spip-paragraphes
+
+
+spip-poesie:
+  # poesie|poetry
+  # utilise une callback
+  # a affiner en *decrivant* la callback? (replace:spip-poesie.yaml, pick:2)
+  match: ",<poe(sie|try)>(.*)</poe\1>,UimsS"
+  replace: replace_poesie
+  is_callback: Y
+  if_str: '<poe'
+
