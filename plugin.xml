@@ -1,0 +1,12 @@
+<plugin>
+	<nom>TextWheel pour SPIP</nom>
+	<auteur>Fil&amp;Cerdic</auteur>
+	<icon></icon>
+	<licence>GNU/GPL</licence>
+	<version>0.0.1</version>
+	<etat>dev</etat>
+	<description>Integrer TextWheel dans SPIP</description>
+	<prefix>tw</prefix>
+	<categorie>outils</categorie>
+	<necessite id="SPIP" version="[2.1.0;]" />
+</plugin>
