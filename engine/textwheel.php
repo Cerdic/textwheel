@@ -66,6 +66,7 @@ class TextWheelRuleSet {
 	private $sorted = false;
 
 	/**
+	 * Constructor
 	 *
 	 * @param array/string $ruleset
 	 */
@@ -159,7 +160,7 @@ class TextWheel {
 	private $ruleset;
 
 	/**
-	 * Creator
+	 * Constructor
 	 * @param TextWheelRuleSet $ruleset
 	 */
 	public function TextWheel($ruleset = null) {
@@ -268,4 +269,3 @@ if (!function_exists('stripos')) {
 	}
 }
 
-?>
