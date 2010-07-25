@@ -6,12 +6,20 @@
 
 ]
 <?php
+
 include_spip('tw_texte');
 
-echo tw_raccourcis("
-{{{Hello World}}}
+$s = spip_query('SELECT * FROM spip_articles');
 
-Coucou !
-");
+while ($t = sql_fetch($s)) {
+	$tw = tw_propre($t['texte']);
+	$pr = propre($t['texte']);
+
+	if ($tw === $pr)
+		echo "<li>article $t[id_article] OK</li>\n";
+	else {
+		echo "<li>article $t[id_article] <b>NOK</b></li>\n";
+	}
+}
 
 ?>
