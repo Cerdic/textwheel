@@ -79,7 +79,7 @@ class TextWheelRuleSet {
 	 * get sorted Rules
 	 * @return array
 	 */
-	public function getRules(){
+	public function &getRules(){
 		$this->sort();
 		return $this->rules;
 	}
@@ -122,8 +122,6 @@ class TextWheelRuleSet {
 	 * @return array
 	 */
 	private function loadRules($file) {
-		var_dump(dirname(__FILE__).'/../wheels/'.$file);
-		var_dump(file_exists(dirname(__FILE__).'/../wheels/'.$file));
 		if (!preg_match(',[.]yaml$,i',$file)
 			// external rules
 			OR 
@@ -195,10 +193,10 @@ class TextWheel {
 	 * @return string
 	 */
 	public function text($t) {
-		var_dump($this->ruleset->getRules());
+		$rules = & $this->ruleset->getRules();
 		## apply each in order
-		foreach ($this->ruleset->getRules() as $i=>$rule) #php4+php5
-			$this->apply($this->rules[$i], $t);
+		foreach ($rules as $i=>$rule) #php4+php5
+			$this->apply($rules[$i], $t);
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
 		return $t;
