@@ -23,6 +23,6 @@ function tw_propre($t) {
 		$ruleset->addRules('spip/spip-paragrapher.yaml');
 		$wheel = new TextWheel($ruleset);
 	}
-	return $wheel->test($t);
+	return $wheel->text($t);
 }
 
