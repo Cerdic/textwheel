@@ -59,23 +59,145 @@ class TextWheelRule {
 
 }
 
-class TextWheel {
-	var $rules = array();
+class TextWheelRuleSet {
+	# list of rules
+	private $rules = array();
+	# sort flag
 	private $sorted = false;
 
-	/*
-	 * @param array $ruleset
+	/**
+	 *
+	 * @param array/string $ruleset
 	 */
-	public function TextWheel($ruleset = array()) {
+	public function TextWheelRuleSet($ruleset = array()) {
 		if ($ruleset)
-			$this->addrules($ruleset);
+			$this->addRules($ruleset);
 	}
 
-	/*
-	 * @param object $rule
+	/**
+	 * get sorted Rules
+	 * @return array
+	 */
+	public function &getRules(){
+		$this->sort();
+		return $rules;
+	}
+
+	/**
+	 * add a rule
+	 *
+	 * @param TextWheelRule $rule
+	 */
+	public function addRule($rule) {
+		# cast array-rule to object
+		if (is_array($rule))
+			$rule = (object) $rule;
+		$this->rules[] = $rule;
+		$this->sorted = false;
+	}
+
+	/**
+	 * add an list of rules
+	 * can be an array or a string filename
+	 *
+	 * @param array/string $rules
+	 */
+	public function addRules($rules) {
+		if (is_string($rules))
+			$rules = $this->loadRules($rules);
+		if (is_array($rules) AND count($rules)){
+			# cast array-rules to objects
+			foreach ($rules as $i => $rule)
+				if (is_array($rule))
+					$rules[$i] = (object) $rule;
+			$this->rules = array_merge($this->rules, $rules);
+			$this->sorted = false;
+		}
+	}
+
+	/**
+	 * Load a yaml file describing rules
+	 * @param string $file
+	 * @return array
+	 */
+	private function loadRules($file) {
+		if (!preg_match(',[.]yaml$,i',$file))
+			return array();
+		require_once 'lib/yaml/sfYaml.php';
+		$rules = sfYaml::load('wheels/'.$file);
+
+		// if a php file with same name exists
+		// include it as it contains callback functions
+		if ($rules
+			AND $f = preg_replace(',[.]yaml$,i','.php',$file)
+		  AND file_exists('wheels/'.$f))
+			include_once 'wheels/'.$f;
+
+		return $rules;
+	}
+
+
+	/**
+	 * Sort rules according to priority and
+	 */
+	private function sort() {
+		if (!$this->sorted) {
+			$rulz = array();
+			foreach($this->rules as $index => $rule)
+				$rulz[intval($rule->priority)][$index] = $rule;
+			ksort($rulz);
+			$this->rules = array();
+			foreach($rulz as $rules)
+				$this->rules += $rules;
+
+			$this->sorted = true;
+		}
+	}
+}
+
+class TextWheel {
+	private $ruleset;
+
+	/**
+	 * Creator
+	 * @param TextWheelRuleSet $ruleset
+	 */
+	public function TextWheel($ruleset = null) {
+		$this->setRuleSet($ruleset);
+	}
+
+	/**
+	 * Set RuleSet
+	 * @param TextWheelRuleSet $ruleset
+	 */
+	public function setRuleSet($ruleset){
+		if (!is_object($ruleset))
+			$ruleset = new TextWheelRuleSet ();
+		$this->ruleset = $ruleset;
+	}
+
+	/**
+	 * Apply all rules of RuleSet to a text
+	 *
+	 * @param string $t
+	 * @return string
+	 */
+	public function text($t) {
+		$this->sort();
+		## apply each in order
+		foreach ($this->ruleset->getRules() as $i=>$rule) #php4+php5
+			$this->apply($this->rules[$i], $t);
+		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
+		#	$this->apply($rule, $t);
+		return $t;
+	}
+
+	/**
+	 * Apply a rule to a text
+	 *
+	 * @param TextWheelRule $rule
 	 * @param string $t
 	 * @param int $count
-	 * @return bool
 	 */
 	private function apply(&$rule, &$t, &$count=null) {
 		if (
@@ -136,62 +258,6 @@ class TextWheel {
 			}
 		}
 	}
-
-	/*
-	 * Apply all rules to a text
-	 * @param string $t
-	 * @return string
-	 */
-	public function text($t) {
-		$this->sort();
-		## apply each in order
-		foreach ($this->rules as $i=>$rule) #php4+php5
-			$this->apply($this->rules[$i], $t);
-		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
-		#	$this->apply($rule, $t);
-		return $t;
-	}
-
-	/*
-	 * add a rule
-	 */
-	public function addRule($rule) {
-		# cast array-rule to object
-		if (is_array($rule))
-			$rule = (object) $rule;
-		$this->rules[] = $rule;
-		$this->sorted = false;
-	}
-	/*
-	 * add an array of rules
-	 */
-	public function addRules(array $rules) {
-		# cast array-rules to objects
-		foreach ($rules as $i => $rule)
-			if (is_array($rule))
-				$rules[$i] = (object) $rule;
-		$this->rules = array_merge($this->rules, $rules);
-		$this->sorted = false;
-	}
-
-
-	/*
-	 * Sort rules according to priority
-	 */
-	private function sort() {
-		if (!$this->sorted) {
-			$rulz = array();
-			foreach($this->rules as $index => $rule)
-				$rulz[intval($rule->priority)][$index] = $rule;
-			ksort($rulz);
-			$this->rules = array();
-			foreach($rulz as $rules)
-				$this->rules += $rules;
-
-			$this->sorted = true;
-		}
-	}
-
 }
 
 
