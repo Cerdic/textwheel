@@ -19,3 +19,10 @@ function replace_poesie($m) {
 		$wheel = new TextWheel(new TextWheelRuleSet('spip-poesie.yaml'));
 	return $wheel->text($m[2]);
 }
+
+function replace_puce(){
+	static $puce;
+	if (!isset($puce))
+		$puce = "\n<br />".definir_puce()."&nbsp;";
+	return $puce;
+}

@@ -2,16 +2,21 @@
 
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
+$GLOBALS['spip_wheels'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
+if (test_espace_prive ())
+	$GLOBALS['spip_wheels'][] = 'spip/ecrire.yaml';
 
 function tw_traiter_raccourcis($letexte) {
 	static $wheel;
-	if (!isset($wheel)){
-		$ruleset = new TextWheelRuleSet('spip/spip.yaml');
-		$ruleset->addRules('spip/spip-paragrapher.yaml');
-		$wheel = new TextWheel($ruleset);
-	}
 	// Appeler les fonctions de pre_traitement
 	$letexte = pipeline('pre_propre', $letexte);
+
+	if (!isset($wheel)){
+		$ruleset = new TextWheelRuleSet();
+		foreach($GLOBALS['spip_wheels'] as $wheel)
+			$ruleset->addRules($wheel);
+		$wheel = new TextWheel($ruleset);
+	}
 
 	// Gerer les notes (ne passe pas dans le pipeline)
 	$notes = charger_fonction('notes', 'inc');
@@ -32,6 +37,7 @@ function tw_traiter_raccourcis($letexte) {
 		$letexte = str_replace($t[1], traiter_tableau($t[1]), $letexte);
 	}
 
+	$letexte = "\n".trim($letexte);
 	$letexte = $wheel->text($letexte);
 
 	// Appeler les fonctions de post-traitement
