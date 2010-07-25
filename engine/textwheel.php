@@ -63,7 +63,7 @@ class TextWheelRuleSet {
 	# list of rules
 	private $rules = array();
 	# sort flag
-	private $sorted = false;
+	private $sorted = true;
 
 	/**
 	 * Constructor
@@ -79,9 +79,9 @@ class TextWheelRuleSet {
 	 * get sorted Rules
 	 * @return array
 	 */
-	public function &getRules(){
+	public function getRules(){
 		$this->sort();
-		return $rules;
+		return $this->rules;
 	}
 
 	/**
@@ -122,17 +122,28 @@ class TextWheelRuleSet {
 	 * @return array
 	 */
 	private function loadRules($file) {
-		if (!preg_match(',[.]yaml$,i',$file))
+		var_dump(dirname(__FILE__).'/../wheels/'.$file);
+		var_dump(file_exists(dirname(__FILE__).'/../wheels/'.$file));
+		if (!preg_match(',[.]yaml$,i',$file)
+			// external rules
+			OR 
+				(!file_exists($file)
+				// rules embed with texwheels
+				AND !file_exists($file = dirname(__FILE__).'/../wheels/'.$file)
+				)
+			)
 			return array();
-		require_once 'lib/yaml/sfYaml.php';
-		$rules = sfYaml::load('wheels/'.$file);
+		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
+		$rules = sfYaml::load($file);
+
+		if (!$rules)
+			return array();
 
 		// if a php file with same name exists
 		// include it as it contains callback functions
-		if ($rules
-			AND $f = preg_replace(',[.]yaml$,i','.php',$file)
-		  AND file_exists('wheels/'.$f))
-			include_once 'wheels/'.$f;
+		if ($f = preg_replace(',[.]yaml$,i','.php',$file)
+		  AND file_exists($f))
+			include_once $f;
 
 		return $rules;
 	}
@@ -184,7 +195,7 @@ class TextWheel {
 	 * @return string
 	 */
 	public function text($t) {
-		$this->sort();
+		var_dump($this->ruleset->getRules());
 		## apply each in order
 		foreach ($this->ruleset->getRules() as $i=>$rule) #php4+php5
 			$this->apply($this->rules[$i], $t);
