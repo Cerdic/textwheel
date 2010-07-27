@@ -1,23 +1,30 @@
 --- # Syntaxe des raccourcis SPIP, version 0.0.1
     #
     # Si on nomme une regle, elle devient surchargeable
+spip-listes:
+  match: "/\n-[*#]/S"
+  replace: replace_listes
+  if_chars: "\n"
+  is_callback: Y
+  type: all
+  priority: -20 # avant !spip-paragraphes
 
 spip-alinea:
   match: [ "/\n(----+|____+)/S", "/\n-- */S" ]
-  replace: [ "\n\n\n<hr class='spip' />\n\n\n", "\n<br />&mdash;&nbsp;" ]
+  replace: [ "\n\n\n<hr class=\"spip\" />\n\n\n", "\n<br />&mdash;&nbsp;" ]
   if_chars: "\n"
   priority: -20 # avant !spip-paragraphes
 
 spip-puce:
-  match: [ "/\n- */S" ]
+  match: "/\n- */S"
   replace: replace_puce
   if_chars: "\n"
   is_callback: Y
   priority: -20 # avant !spip-paragraphes
 
 spip-br:
-  match: [ "/\n_ +/S" ]
-  replace: [ "\n<br />" ]
+  match: "/\n_ +/S"
+  replace: "\n<br />"
   if_chars: "\n"
   priority: -20 # avant !spip-paragraphes
 
