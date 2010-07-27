@@ -15,14 +15,25 @@ include_spip('inc/revisions');
 $s = spip_query('SELECT * FROM spip_articles');
 
 $erreurs = 10;
+$success = 0;
+$time_propre = $time_tw = 0;
 while ($t = sql_fetch($s)) {
+	propre($t['texte']); // a blanc, pour faire les inits communes mais seulement si pas de memoization
+
 	$notes('','reset_all');
+	spip_timer('tw');
 	$tw = tw_propre($t['texte']);
+	$time_tw +=spip_timer('tw',true);
+	
 	$notes('','reset_all');
+	spip_timer('propre');
 	$pr = propre($t['texte']);
+	$time_propre+=spip_timer('propre',true);
+
 
 	if ($tw === $pr)
-		echo "<li>article $t[id_article] OK</li>\n";
+		$success++;
+		//echo "<li>article $t[id_article] OK</li>\n";
 	else {
 		echo "<li>article $t[id_article] <b>NOK</b>";
 		echo " <a href='#' onclick=\"jQuery(this).siblings('div').toggle();return false;\">Voir</a>";
@@ -34,6 +45,11 @@ while ($t = sql_fetch($s)) {
 		echo "</li>\n";
 		if (!$erreurs--) break;
 	}
+
 }
+echo "$success articles compares avec succes";
+echo "<br />Temps total Propre : $time_propre";
+echo "<br />Temps total TextWheel : $time_tw";
+echo "<br />Ecart : ".round(100*$time_tw/$time_propre,1)."%";
 
 ?>
