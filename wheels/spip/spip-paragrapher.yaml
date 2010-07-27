@@ -7,6 +7,12 @@
     is_callback: y
     replace: trim
 
+toujours-paragrapher:
+    # Ajouter un <p> au debut pour assurer d'avoir toujours un paragraphe
+    # anuler cette regle pour revenir a l'ancien comportement de SPIP
+    type: all
+    replace: "<p>\0"
+
 -
     # Ajouter un espace aux <p> et un "STOP P"
     # transformer aussi les </p> existants en <p>, nettoyes ensuite
