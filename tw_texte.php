@@ -2,7 +2,7 @@
 
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
-$GLOBALS['spip_wheels'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
+$GLOBALS['spip_wheels'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml','spip/spip-tableaux.yaml');
 if (test_espace_prive ())
 	$GLOBALS['spip_wheels'][] = 'spip/ecrire.yaml';
 
@@ -21,21 +21,6 @@ function tw_traiter_raccourcis($letexte) {
 	// Gerer les notes (ne passe pas dans le pipeline)
 	$notes = charger_fonction('notes', 'inc');
 	list($letexte, $mes_notes) = $notes($letexte);
-
-	//
-	// Tableaux
-	//
-
-	// ne pas oublier les tableaux au debut ou a la fin du texte
-	$letexte = preg_replace(",^\n?[|],S", "\n\n|", $letexte);
-	$letexte = preg_replace(",\n\n+[|],S", "\n\n\n\n|", $letexte);
-	$letexte = preg_replace(",[|](\n\n+|\n?$),S", "|\n\n\n\n", $letexte);
-
-	if (preg_match_all(',[^|](\n[|].*[|]\n)[^|],UmsS', $letexte,
-	$regs, PREG_SET_ORDER))
-	foreach ($regs as $t) {
-		$letexte = str_replace($t[1], traiter_tableau($t[1]), $letexte);
-	}
 
 	$letexte = $wheel->text($letexte);
 

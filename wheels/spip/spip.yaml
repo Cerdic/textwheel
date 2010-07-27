@@ -7,12 +7,12 @@
   type: all
   is_callback: y
   replace: trim
-  priority: -100 # avant toute chose
+  priority: -20 # avant !spip-paragraphes
 
 -
   type: all
   replace: "\n\0"
-  priority: -100 # avant toute chose
+  priority: -20 # avant !spip-paragraphes
 
 spip-listes:
   match: "/\n-[*#]/S"

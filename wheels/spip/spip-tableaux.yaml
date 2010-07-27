@@ -1,0 +1,29 @@
+--- # Syntaxe des raccourcis SPIP, version 0.0.1
+    #
+    # Si on nomme une regle, elle devient surchargeable
+
+
+-
+  match: "/^\n?[|]/S"
+  replace: "\n\n|"
+  if_chars: "|"
+  priority: -30 # avant les racourcis
+
+-
+  match: "/\n\n+[|]/S"
+  replace: "\n\n\n\n|"
+  if_chars: "|"
+  priority: -30 # avant les racourcis
+
+-
+  match: "/[|](\n\n+|\n?$)/S"
+  replace: "|\n\n\n\n"
+  if_chars: "|"
+  priority: -30 # avant les racourcis
+
+spip-tableaux:
+  match: "/([^|])(\n[|].*[|]\n)([^|])/UmsS"
+  replace: replace_tableaux
+  if_chars: "|"
+  is_callback: Y
+  priority: -30 # avant !spip-paragraphes
