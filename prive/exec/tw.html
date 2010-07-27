@@ -12,7 +12,9 @@ include_spip('tw_texte');
 include_spip('inc/diff');
 include_spip('inc/revisions');
 
-$s = spip_query('SELECT * FROM spip_articles');
+if (_request('id_article'))
+	$w = " WHERE id_article=".intval(_request('id_article'));
+$s = spip_query('SELECT * FROM spip_articles'.$w);
 
 $erreurs = 10;
 $success = 0;
@@ -40,7 +42,7 @@ while ($t = sql_fetch($s)) {
 		$diff = new Diff(new DiffTexte);
 		$n = preparer_diff(str_replace('<','&#60;',$tw));
 		$o = preparer_diff(str_replace('<','&#60;',$pr));
-		echo "<div style='display:none;'>".afficher_diff($diff->comparer($n,$o))."</div>";
+		echo "<div style='display:none;'><table><tr><td>".afficher_diff($diff->comparer($n,$o))."</td></tr></table></div>";
 
 		echo "</li>\n";
 		if (!$erreurs--) break;
