@@ -24,15 +24,15 @@ toujours-paragrapher:
 -
     if_str: "<"
     #if_match: ",<p\b,iS"
-    match: ",</?p\b.*>,UiS"
-    replace: "<STOP P><p \2>"
+    match: ",</?p\b\s?(.*?)>,iS"
+    replace: "<STOP P><p \1>"
 
 -
     # Fermer les paragraphes
     # y compris sur "STOP P"
     # en reperant les balises blocs XHTML
     if_str: "<"
-    match: ",(<p\s.*)(</?(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset)[>[:space:]]),UimsS"
+    match: ",(<p\s.*)(</?(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset|style)[>[:space:]]),UimsS"
     replace: "\n\1</p>\n\2"
 
 -
