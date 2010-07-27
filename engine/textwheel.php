@@ -56,7 +56,8 @@ class TextWheelRule {
 	# language specific
 	var $require; # file to require_once
 	var $create_replace; # do create_function('$m', %) on $this->replace, $m is the matched array
-
+	
+	var $is_wheel; # flag to create a sub-wheel from rules given as replace
 }
 
 class TextWheelRuleSet {
@@ -232,39 +233,54 @@ class TextWheel {
 			# language specific
 			if ($rule->require)
 				require_once $rule->require;
-			if ($rule->create_replace)
+			if ($rule->create_replace){
 				$rule->replace = create_function('$m', $rule->replace);
+				$rule->create_replace = false;
+				$rule->is_callback = true;
+			}
+			elseif ($rule->is_wheel){
+				$var = '$m[0]'; $arg = '$m';
+				if ($rule->type=='all' OR $rule->type=='str')
+					$var = $arg = '$t';
+				$code = 'static $w=null; if (!isset($w)) $w=new TextWheel(new TextWheelRuleSet('
+				. var_export($rule->replace,true) . '));
+				return $w->text('.$var.');';
+				$rule->replace = create_function($arg, $code);
+				$rule->is_wheel = false;
+				$rule->is_callback = true;
+			}
 			# /end
-			if (isset($rule->replace))
-			switch($rule->type) {
-				case 'all':
-					if ($rule->is_callback) {
-						$func = $rule->replace;
-						$t = $func($t);
-					}
-					else {
-						# special case: replace \0 with $t
-						#   replace: "A\0B" will surround the string with A..B
-						#   replace: "\0\0" will repeat the string
-						$t = str_replace('\\0', $t, $rule->replace);
-					}
-					break;
-				case 'str':
-					if ($rule->is_callback) {
-						if (count($b = explode($rule->match, $t)) > 1)
-							$t = join($rule->replace(), $b);
-					} else {
-						$t = str_replace($rule->match, $rule->replace, $t, $count);
-					}
-					break;
-				case 'preg':
-				default:
-					if ($rule->is_callback) {
-						$t = preg_replace_callback($rule->match, $rule->replace, $t, -1, $count);
-					} else {
-						$t = preg_replace($rule->match, $rule->replace, $t, -1, $count);
-					}
-					break;
+			if (isset($rule->replace)) {
+				switch($rule->type) {
+					case 'all':
+						if ($rule->is_callback) {
+							$func = $rule->replace;
+							$t = $func($t);
+						}
+						else {
+							# special case: replace \0 with $t
+							#   replace: "A\0B" will surround the string with A..B
+							#   replace: "\0\0" will repeat the string
+							$t = str_replace('\\0', $t, $rule->replace);
+						}
+						break;
+					case 'str':
+						if ($rule->is_callback) {
+							if (count($b = explode($rule->match, $t)) > 1)
+								$t = join($rule->replace($rule->match), $b);
+						} else {
+							$t = str_replace($rule->match, $rule->replace, $t, $count);
+						}
+						break;
+					case 'preg':
+					default:
+						if ($rule->is_callback) {
+							$t = preg_replace_callback($rule->match, $rule->replace, $t, -1, $count);
+						} else {
+							$t = preg_replace($rule->match, $rule->replace, $t, -1, $count);
+						}
+						break;
+				}
 			}
 		}
 	}
