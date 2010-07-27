@@ -17,7 +17,7 @@
 spip-listes:
   match: "/\n-[*#]/S"
   replace: replace_listes
-  if_chars: "\n"
+  if_str: "\n-"
   is_callback: Y
   type: all
   priority: -20 # avant !spip-paragraphes
@@ -31,14 +31,14 @@ spip-alinea:
 spip-puce:
   match: "/\n- */S"
   replace: replace_puce
-  if_chars: "\n"
+  if_str: "\n-"
   is_callback: Y
   priority: -20 # avant !spip-paragraphes
 
 spip-br:
   match: "/\n_ +/S"
   replace: "\n<br />"
-  if_chars: "\n"
+  if_str: "\n_"
   priority: -20 # avant !spip-paragraphes
 
 spip-accolades:
@@ -67,7 +67,7 @@ quote-intro:
   # eliminer les br restant en debut de texte
   match: '@^\n<br />@S'
   replace: ''
-  if_chars: "\n"
+  if_str: "\n<br"
   priority: -20 # avant !spip-paragraphes
 
 
