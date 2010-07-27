@@ -37,7 +37,6 @@ function tw_traiter_raccourcis($letexte) {
 		$letexte = str_replace($t[1], traiter_tableau($t[1]), $letexte);
 	}
 
-	$letexte = "\n".trim($letexte);
 	$letexte = $wheel->text($letexte);
 
 	// Appeler les fonctions de post-traitement

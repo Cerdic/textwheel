@@ -1,6 +1,19 @@
 --- # Syntaxe des raccourcis SPIP, version 0.0.1
     #
     # Si on nomme une regle, elle devient surchargeable
+
+-
+  # trim
+  type: all
+  is_callback: y
+  replace: trim
+  priority: -100 # avant toute chose
+
+-
+  type: all
+  replace: "\n\0"
+  priority: -100 # avant toute chose
+
 spip-listes:
   match: "/\n-[*#]/S"
   replace: replace_listes
