@@ -22,6 +22,17 @@ spip-listes:
   type: all
   priority: -20 # avant !spip-paragraphes
 
+-
+  match: ",</?[a-z!][^<>]*[{}_-][^<>]*>,imsS"
+  if_chars: "<"
+  priority: -20 # avant !spip-paragraphes
+  is_wheel: Y
+  replace:
+    -
+      match: ['{', '}', '_', '-']
+      replace: ["\x1", "\x2", "\x3", "\x4"]
+      type: str
+
 spip-alinea:
   match: [ "/\n(----+|____+)/S", "/\n-- */S" ]
   replace: [ "\n\n\n<hr class=\"spip\" />\n\n\n", "\n<br />&mdash;&nbsp;" ]
@@ -80,3 +91,8 @@ spip-poesie:
   is_callback: Y
   if_str: '<poe'
 
+-
+  match: ["\x1", "\x2", "\x3", "\x4"]
+  replace: ['{', '}', '_', '-']
+  if_chars: "\x1"
+  type: str
