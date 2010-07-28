@@ -17,7 +17,9 @@
 	$err = array();
 	foreach($results as $titre=>$res){
 		if (!$res['result'])
-			$err[] = display_error($titre,'TextWheel()->text("'.$res['test']->input.'")',$res['output'],$res['test']->output);
+			$err[] = display_error($titre,'TextWheel()->text("'.$res['test']->input.'")'
+							//."<br />" . nl2br(print_r($res['test']->ruleset,true))
+							,$res['output'],$res['test']->output);
 	}
 	
 	// si le tableau $err est pas vide ca va pas

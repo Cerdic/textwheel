@@ -59,12 +59,22 @@ replace_str_ifchars_ok:
       replace: "sortie"
   output: "Un texte de test en sortie"
 
-replace_str_ifchars_ci:
+replace_str_ifchars_ci_no:
   input: "Un texte de test en entree"
   ruleset:
     -
       match: "entree"
       if_chars: "T"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_ifchars_ci_ok:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "tT"
       type: str
       replace: "sortie"
   output: "Un texte de test en sortie"
@@ -89,7 +99,7 @@ replace_str_ifchars_2:
       replace: "sortie"
   output: "Un texte de test en sortie"
 
-replace_str_ifchars_2_ci:
+replace_str_ifchars_2_ci_no:
   input: "Un texte de test en entree"
   ruleset:
     -
@@ -97,7 +107,7 @@ replace_str_ifchars_2_ci:
       if_chars: "TE"
       type: str
       replace: "sortie"
-  output: "Un texte de test en sortie"
+  output: "Un texte de test en entree"
 
 replace_str_ifchars_3:
   input: "Un texte de test en entree"
