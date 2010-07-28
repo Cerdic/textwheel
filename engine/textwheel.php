@@ -60,6 +60,35 @@ class TextWheelRule {
 	var $require; # file to require_once
 	var $create_replace; # do create_function('$m', %) on $this->replace, $m is the matched array
 	
+	public function TextWheelRule($args) {
+		if (!is_array($args))
+			return;
+		if (isset($args['priority'])) $this->priority = $args['priority'];
+
+		if (isset($args['name'])) $this->name = $args['name'];
+		if (isset($args['author'])) $this->author = $args['author'];
+		if (isset($args['url'])) $this->url = $args['url'];
+		if (isset($args['package'])) $this->package = $args['package'];
+		if (isset($args['version'])) $this->version = $args['version'];
+
+		if (isset($args['test'])) $this->test = $args['test'];
+		if (isset($args['disabled'])) $this->disabled = $args['disabled'];
+
+		if (isset($args['if_chars'])) $this->if_chars = $args['if_chars'];
+		if (isset($args['if_str'])) $this->if_str = $args['if_str'];
+		if (isset($args['if_match'])) $this->if_match = $args['if_match'];
+		
+		if (isset($args['type'])) $this->type = $args['type'];
+		if (isset($args['match'])) $this->match = $args['match'];
+
+		if (isset($args['replace'])) $this->replace = $args['replace'];
+
+		if (isset($args['is_wheel'])) $this->is_wheel = $args['is_wheel'];
+		if (isset($args['is_callback'])) $this->is_callback = $args['is_callback'];
+
+		if (isset($args['require'])) $this->require = $args['require'];
+		if (isset($args['create_replace'])) $this->create_replace = $args['create_replace'];
+	}
 }
 
 class TextWheelRuleSet {
@@ -95,7 +124,7 @@ class TextWheelRuleSet {
 	public function addRule($rule) {
 		# cast array-rule to object
 		if (is_array($rule))
-			$rule = (object) $rule;
+			$rule = new TextWheelRule($rule);
 		$this->rules[] = $rule;
 		$this->sorted = false;
 	}
@@ -113,7 +142,7 @@ class TextWheelRuleSet {
 			# cast array-rules to objects
 			foreach ($rules as $i => $rule)
 				if (is_array($rule))
-					$rules[$i] = (object) $rule;
+					$rules[$i] = new TextWheelRule($rule);
 			$this->rules = array_merge($this->rules, $rules);
 			$this->sorted = false;
 		}
