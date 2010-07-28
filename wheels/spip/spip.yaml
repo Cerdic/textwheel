@@ -94,5 +94,4 @@ spip-poesie:
 -
   match: ["\x1", "\x2", "\x3", "\x4"]
   replace: ['{', '}', '_', '-']
-  if_chars: "\x1"
   type: str
