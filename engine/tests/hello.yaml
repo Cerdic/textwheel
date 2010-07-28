@@ -1,0 +1,12 @@
+--- # Tests unitaires
+    #
+    # Si on nomme un test, il devient surchargeable
+
+hello:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+	    type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
