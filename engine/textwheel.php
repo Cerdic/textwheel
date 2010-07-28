@@ -66,31 +66,9 @@ class TextWheelRule {
 	public function TextWheelRule($args) {
 		if (!is_array($args))
 			return;
-		if (isset($args['priority'])) $this->priority = $args['priority'];
-
-		if (isset($args['name'])) $this->name = $args['name'];
-		if (isset($args['author'])) $this->author = $args['author'];
-		if (isset($args['url'])) $this->url = $args['url'];
-		if (isset($args['package'])) $this->package = $args['package'];
-		if (isset($args['version'])) $this->version = $args['version'];
-
-		if (isset($args['test'])) $this->test = $args['test'];
-		if (isset($args['disabled'])) $this->disabled = $args['disabled'];
-
-		if (isset($args['if_chars'])) $this->if_chars = $args['if_chars'];
-		if (isset($args['if_str'])) $this->if_str = $args['if_str'];
-		if (isset($args['if_match'])) $this->if_match = $args['if_match'];
-		
-		if (isset($args['type'])) $this->type = $args['type'];
-		if (isset($args['match'])) $this->match = $args['match'];
-
-		if (isset($args['replace'])) $this->replace = $args['replace'];
-
-		if (isset($args['is_wheel'])) $this->is_wheel = $args['is_wheel'];
-		if (isset($args['is_callback'])) $this->is_callback = $args['is_callback'];
-
-		if (isset($args['require'])) $this->require = $args['require'];
-		if (isset($args['create_replace'])) $this->create_replace = $args['create_replace'];
+		foreach($args as $k=>$v)
+			if (property_exists($this, $k))
+				$this->$k = $args[$k];
 	}
 }
 

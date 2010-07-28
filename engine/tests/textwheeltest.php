@@ -34,16 +34,9 @@ class TextWheelTest {
 	public function TextWheelTest($args) {
 		if (!is_array($args))
 			return;
-		if (isset($args['input'])) $this->input = $args['input'];
-		if (isset($args['ruleset'])) $this->ruleset = $args['ruleset'];
-		if (isset($args['output'])) $this->output = $args['output'];
-
-		if (isset($args['name'])) $this->name = $args['name'];
-		if (isset($args['author'])) $this->author = $args['author'];
-		if (isset($args['url'])) $this->url = $args['url'];
-		if (isset($args['package'])) $this->package = $args['package'];
-		if (isset($args['version'])) $this->version = $args['version'];
-		if (isset($args['disabled'])) $this->disabled = $args['disabled'];
+		foreach($args as $k=>$v)
+			if (property_exists($this, $k))
+				$this->$k = $args[$k];
 	}
 }
 
