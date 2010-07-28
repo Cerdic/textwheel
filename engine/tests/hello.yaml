@@ -7,6 +7,17 @@ hello:
   ruleset:
     -
       match: "entree"
-	    type: str
+      type: str
       replace: "sortie"
   output: "Un texte de test en sortie"
+
+# Activer ce test pour tester un echec
+fail:
+  input: "Un texte de test en entree"
+  disabled: Y
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie (ce test doit echouer)"

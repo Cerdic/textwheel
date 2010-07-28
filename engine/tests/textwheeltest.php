@@ -149,19 +149,23 @@ class TextWheelTester {
 	 * @return string
 	 */
 	public function &test() {
+
 		$tests = & $this->testset->getTests();
 		$results = array();
 		## apply each in order
 		foreach ($tests as $i=>$test){ #php4+php5
-			$results[$i] = array('test' => &$tests[$i]);
-			$w = new TextWheel(new TextWheelRuleSet($test->ruleset));
-			$output = $w->text($test->input);
-			if ($output == $test->output) {
-				$results[$i]['result'] = true;
-			}
-			else {
-				$results[$i]['result'] = false;
-				$results[$i]['output'] = $output;
+			if (!$test->disabled) {
+				$results[$i] = array('test' => &$tests[$i]);
+
+				$w = new TextWheel($test->ruleset);
+				$output = $w->text($test->input);
+				if ($output == $test->output) {
+					$results[$i]['result'] = true;
+				}
+				else {
+					$results[$i]['result'] = false;
+					$results[$i]['output'] = $output;
+				}
 			}
 		}
 		return $results;
