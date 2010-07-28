@@ -1,0 +1,287 @@
+--- # Tests unitaires
+    #
+    # Si on nomme un test, il devient surchargeable
+
+disabled:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace: "sortie"
+      disabled: Y
+  output: "Un texte de test en entree"
+
+replace_all:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: all
+      replace: "sortie"
+  output: "sortie"
+
+replace_all_add:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: all
+      replace: "\0sortie"
+  output: "Un texte de test en entreesortie"
+
+replace_all_cb:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: all
+      replace: 'strtoupper'
+      is_callback: Y
+  output: "UN TEXTE DE TEST EN ENTREE"
+
+replace_str:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_ok:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "t"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_ci:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "T"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_no:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "z"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_ifchars_2:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "te"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_2_ci:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "TE"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_3:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "tx"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_4:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "tz"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifchars_5:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "pz"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_ifchars_6:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_chars: "pt"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifstr_ok:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_str: "t"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifstr_no:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_str: "z"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_ifstr_2:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_str: "te"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifstr_3:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_str: "tx"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_ifstr_4:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_str: "tz"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+
+replace_str_ifmatch_ok:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_match: "/^U/"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en sortie"
+
+replace_str_ifmatch_no:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      if_match: "/^u/"
+      type: str
+      replace: "sortie"
+  output: "Un texte de test en entree"
+
+replace_str_cb:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace: 'strtoupper'
+      is_callback: Y
+  output: "Un texte de test en ENTREE"
+
+replace_str_wheel:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace:
+        -
+          match: "e"
+          type: str
+          replace: "i"
+      is_wheel: Y
+  output: "Un texte de test en intrii"
+
+replace_preg:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/te([xs])t(e?)/"
+      type: preg
+      replace: "tet\2\1"
+  output: "Un tetex de tets en entree"
+
+replace_preg_cb:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/te([xs])t(e?)/"
+      type: preg
+      replace: "test_preg_cb"
+      is_callback: Y
+  output: "Un x de s en entree"
+
+replace_preg_cb_create:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/te([xs])t(e?)/"
+      type: preg
+      replace: "return $m[1].$m[2];"
+      create_replace: Y
+  output: "Un xe de s en entree"
+
+replace_preg_wheel:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/te([xs])t(e?)/"
+      type: preg
+      replace:
+        -
+          match: "e"
+          type: str
+          replace: "i"
+      is_wheel: Y
+  output: "Un tixti de tist en entree"
+
+
+replace_default:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/te([xs])t(e?)/"
+      replace: "tet\2\1"
+  output: "Un tetex de tets en entree"

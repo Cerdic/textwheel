@@ -11,7 +11,7 @@
 	require $remonte.'tests/test.inc';
 	find_in_path("engine/tests/textwheeltest.php",'',true);
 
-	$testeur = new TextWheelTester(new TextWheelTestSet('hello.yaml'));
+	$testeur = new TextWheelTester(new TextWheelTestSet('textwheel.yaml'));
 	$results = $testeur->test();
 
 	$err = array();
