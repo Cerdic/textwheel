@@ -30,6 +30,21 @@ class TextWheelTest {
 	var $package; # test belongs to package
 	var $version; # test version
 	var $disabled=false; # true if test is disabled
+
+	public function TextWheelTest($args) {
+		if (!is_array($args))
+			return;
+		if (isset($args['input'])) $this->input = $args['input'];
+		if (isset($args['ruleset'])) $this->ruleset = $args['ruleset'];
+		if (isset($args['output'])) $this->output = $args['output'];
+
+		if (isset($args['name'])) $this->name = $args['name'];
+		if (isset($args['author'])) $this->author = $args['author'];
+		if (isset($args['url'])) $this->url = $args['url'];
+		if (isset($args['package'])) $this->package = $args['package'];
+		if (isset($args['version'])) $this->version = $args['version'];
+		if (isset($args['disabled'])) $this->disabled = $args['disabled'];
+	}
 }
 
 class TextWheelTestSet {
@@ -62,7 +77,7 @@ class TextWheelTestSet {
 	public function addTest($test) {
 		# cast array-test to object
 		if (is_array($test))
-			$test = (object) $test;
+			$test = new TextWheelTest($test);
 		if (is_array($test->ruleset))
 			$test->ruleset = new TextWheelRuleSet($test->ruleset);
 		$this->tests[] = $$test;
@@ -81,7 +96,7 @@ class TextWheelTestSet {
 			# cast array-tests to objects
 			foreach ($tests as $i => $test){
 				if (is_array($test))
-					$tests[$i] = (object) $test;
+					$tests[$i] = new TextWheelTest($test);
 				if (is_array($tests[$i]->ruleset))
 					$tests[$i]->ruleset = new TextWheelRuleSet($tests[$i]->ruleset);
 			}
