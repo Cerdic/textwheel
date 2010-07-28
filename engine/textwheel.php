@@ -285,7 +285,7 @@ class TextWheel {
 			(!isset($rule->if_chars)
 				OR ((strlen($rule->if_chars) == 1)
 					? (stripos($t, $rule->if_chars) !== false)
-					: (strtr($t, $rule->if_chars, chr(0)) !== $t)
+					: (strtr($t, $rule->if_chars, str_pad(chr(0), strlen($rule->if_chars), chr(0))) !== $t)
 				)
 			)
 			AND
