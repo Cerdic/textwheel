@@ -47,17 +47,19 @@ class TextWheelRule {
 	# optional
 	# var $limit; # limit number of applications (unused)
 
-
 	## rule effectors, replacing
 	# mandatory
 	var $replace; # replace match with this expression
+
+	# optional
+	var $is_wheel; # flag to create a sub-wheel from rules given as replace
 	var $is_callback=false; # $replace is a callback function
+
 	# optional
 	# language specific
 	var $require; # file to require_once
 	var $create_replace; # do create_function('$m', %) on $this->replace, $m is the matched array
 	
-	var $is_wheel; # flag to create a sub-wheel from rules given as replace
 }
 
 class TextWheelRuleSet {
