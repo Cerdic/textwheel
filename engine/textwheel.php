@@ -59,6 +59,9 @@ class TextWheelRule {
 	# language specific
 	var $require; # file to require_once
 	var $create_replace; # do create_function('$m', %) on $this->replace, $m is the matched array
+
+	# optimizations
+	var $func_replace;
 	
 	public function TextWheelRule($args) {
 		if (!is_array($args))
@@ -235,6 +238,62 @@ class TextWheel {
 	}
 
 	/**
+	 * Initializing a rule a first call
+	 * including file, creating function or wheel
+	 * optimizing tests
+	 *
+	 * @param TextWheelRule $rule
+	 */
+	private function initRule(&$rule){
+
+		# /begin optimization needed
+		# language specific
+		if ($rule->require)
+			require_once $rule->require;
+		if ($rule->create_replace){
+			$rule->replace = create_function('$m', $rule->replace);
+			$rule->create_replace = false;
+			$rule->is_callback = true;
+		}
+		elseif ($rule->is_wheel){
+			$var = '$m[0]'; $arg = '$m';
+			if ($rule->type=='all' OR $rule->type=='str')
+				$var = $arg = '$t';
+			$code = 'static $w=null; if (!isset($w)) $w=new TextWheel(new TextWheelRuleSet('
+			. var_export($rule->replace,true) . '));
+			return $w->text('.$var.');';
+			$rule->replace = create_function($arg, $code);
+			$rule->is_wheel = false;
+			$rule->is_callback = true;
+		}
+		# /end
+
+		# optimization
+		$rule->func_replace = '';
+		if (isset($rule->replace)) {
+			switch($rule->type) {
+				case 'all':
+					$rule->func_replace = 'replace_all';
+					break;
+				case 'str':
+					$rule->func_replace = 'replace_str';
+					break;
+				case 'preg':
+				default:
+					$rule->func_replace = 'replace_preg';
+					break;
+			}
+			if ($rule->is_callback)
+				$rule->func_replace .= '_cb';
+		}
+		if (!method_exists($this, $rule->func_replace)){
+			$rule->disabled = true;
+			$rule->func_replace = 'replace_identity';
+		}
+		# /end
+	}
+
+	/**
 	 * Apply a rule to a text
 	 *
 	 * @param TextWheelRule $rule
@@ -260,60 +319,98 @@ class TextWheel {
 				OR preg_match($rule->if_match, $t)
 			)
 		) {
-			# /begin optimization needed
-			# language specific
-			if ($rule->require)
-				require_once $rule->require;
-			if ($rule->create_replace){
-				$rule->replace = create_function('$m', $rule->replace);
-				$rule->create_replace = false;
-				$rule->is_callback = true;
-			}
-			elseif ($rule->is_wheel){
-				$var = '$m[0]'; $arg = '$m';
-				if ($rule->type=='all' OR $rule->type=='str')
-					$var = $arg = '$t';
-				$code = 'static $w=null; if (!isset($w)) $w=new TextWheel(new TextWheelRuleSet('
-				. var_export($rule->replace,true) . '));
-				return $w->text('.$var.');';
-				$rule->replace = create_function($arg, $code);
-				$rule->is_wheel = false;
-				$rule->is_callback = true;
-			}
-			# /end
-			if (isset($rule->replace)) {
-				switch($rule->type) {
-					case 'all':
-						if ($rule->is_callback) {
-							$func = $rule->replace;
-							$t = $func($t);
-						}
-						else {
-							# special case: replace \0 with $t
-							#   replace: "A\0B" will surround the string with A..B
-							#   replace: "\0\0" will repeat the string
-							$t = str_replace('\\0', $t, $rule->replace);
-						}
-						break;
-					case 'str':
-						if ($rule->is_callback) {
-							if (count($b = explode($rule->match, $t)) > 1)
-								$t = join($rule->replace($rule->match), $b);
-						} else {
-							$t = str_replace($rule->match, $rule->replace, $t, $count);
-						}
-						break;
-					case 'preg':
-					default:
-						if ($rule->is_callback) {
-							$t = preg_replace_callback($rule->match, $rule->replace, $t, -1, $count);
-						} else {
-							$t = preg_replace($rule->match, $rule->replace, $t, -1, $count);
-						}
-						break;
-				}
-			}
+			if (!isset($rule->func_replace))
+				$this->initRule($rule);
+
+			$func = $rule->func_replace;
+			$this->$func($rule->match,$rule->replace,$t,$count);
 		}
+	}
+
+	/**
+	 * No Replacement function
+	 * fall back in case of unknown method for replacing
+	 * should be called max once per rule
+	 * 
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_identity(&$match,&$replace,&$t,&$count){
+	}
+
+	/**
+	 * Static replacement of All text
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_all(&$match,&$replace,&$t,&$count){
+		# special case: replace \0 with $t
+		#   replace: "A\0B" will surround the string with A..B
+		#   replace: "\0\0" will repeat the string
+		$t = str_replace('\\0', $t, $replace);
+	}
+
+	/**
+	 * Call back replacement of All text
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_all_cb(&$match,&$replace,&$t,&$count){
+		$t = $replace($t);
+	}
+
+	/**
+	 * Static string replacement
+	 *
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_str(&$match,&$replace,&$t,&$count){
+		$t = str_replace($match, $replace, $t, $count);
+	}
+
+	/**
+	 * Callback string replacement
+	 *
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_str_cb(&$match,&$replace,&$t,&$count){
+		if (count($b = explode($match, $t)) > 1)
+			$t = join($replace($match), $b);
+	}
+
+	/**
+	 * Static Preg replacement
+	 *
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_preg(&$match,&$replace,&$t,&$count){
+		$t = preg_replace($match, $replace, $t, -1, $count);
+	}
+
+	/**
+	 * Callback Preg replacement
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	private function replace_preg_cb(&$match,&$replace,&$t,&$count){
+		$t = preg_replace_callback($match, $replace, $t, -1, $count);
 	}
 }
 
