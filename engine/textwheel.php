@@ -112,13 +112,26 @@ class TextWheelRuleSet {
 
 	/**
 	 * add an list of rules
-	 * can be an array or a string filename
+	 * can be
+	 * - an array of rules
+	 * - a string filename
+	 * - an array of string filename
 	 *
 	 * @param array/string $rules
 	 */
 	public function addRules($rules) {
+		// rules can be an array of filename
+		if (is_array($rules) AND is_string(reset($rules))) {
+			foreach($rules as $i=>$filename)
+				$this->addRules($filename);
+			return;
+		}
+
+		// rules can be a string : yaml filename
 		if (is_string($rules))
 			$rules = $this->loadRules($rules);
+
+		// rules can be an array of rules
 		if (is_array($rules) AND count($rules)){
 			# cast array-rules to objects
 			foreach ($rules as $i => $rule)
