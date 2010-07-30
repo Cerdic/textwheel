@@ -10,8 +10,8 @@ echapper-asp:
 
 echapper-php:
   if_chars: "<"
-  type: str
-  match: "<?"
+  type: preg
+  match: "/<[?]/"
   replace: "&lt;?"
 
 echapper-script-php:
