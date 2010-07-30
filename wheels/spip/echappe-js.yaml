@@ -4,7 +4,7 @@
 
 -
   if_str: "<script"
-  match: "/<script.*?($|</script.)/isS"
+  match: "{<script.*?($|</script.)}isS"
   is_wheel: y
   replace:
     -
@@ -17,4 +17,4 @@
       is_callback: Y
     -
       type: all
-      replace: "<code>\0</code>"
+      replace: "<code class=\"echappe-js\">\0</code>"

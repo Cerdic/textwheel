@@ -21,20 +21,10 @@ echapper-script-php:
   replace: "&lt;\1"
 
 echappe-js:
+  if_str: "<script"
   type: all
-  replace: "echappe_js"
+  replace: "tw_echappe_js"
   is_callback: Y
-
-#// Pour le js, trois modes : parano (-1), prive (0), ok (1)
-#switch($GLOBALS['filtrer_javascript']) {
-#	case 0:
-#		if (!_DIR_RESTREINT)
-#			$t = echappe_js($t,' style="color:red"');
-#		break;
-#	case -1:
-#		$t = echappe_js($t);
-#		break;
-#}
 
 supprimer-base:
   if_chars: "<"
