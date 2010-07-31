@@ -40,10 +40,7 @@ class TextWheelTest {
 	}
 }
 
-class TextWheelTestSet {
-	# list of tests
-	private $tests = array();
-
+class TextWheelTestSet extends TextWheelDataSet {
 	/**
 	 * Constructor
 	 *
@@ -59,7 +56,7 @@ class TextWheelTestSet {
 	 * @return array
 	 */
 	public function &getTests(){
-		return $this->tests;
+		return $this->datas;
 	}
 
 	/**
@@ -73,7 +70,7 @@ class TextWheelTestSet {
 			$test = new TextWheelTest($test);
 		if (is_array($test->ruleset))
 			$test->ruleset = new TextWheelRuleSet($test->ruleset);
-		$this->tests[] = $$test;
+		$this->datas[] = $$test;
 	}
 
 	/**
@@ -84,7 +81,7 @@ class TextWheelTestSet {
 	 */
 	public function addTests($tests) {
 		if (is_string($tests))
-			$tests = $this->loadTests($tests);
+			$tests = $this->loadFile($tests,dirname(__FILE__).'/');
 		if (is_array($tests) AND count($tests)){
 			# cast array-tests to objects
 			foreach ($tests as $i => $test){
@@ -93,38 +90,8 @@ class TextWheelTestSet {
 				if (is_array($tests[$i]->ruleset))
 					$tests[$i]->ruleset = new TextWheelRuleSet($tests[$i]->ruleset);
 			}
-			$this->tests = array_merge($this->tests, $tests);
+			$this->datas = array_merge($this->datas, $tests);
 		}
-	}
-
-	/**
-	 * Load a yaml file describing tests
-	 * @param string $file
-	 * @return array
-	 */
-	private function loadTests($file) {
-		if (!preg_match(',[.]yaml$,i',$file)
-			// external tests
-			OR 
-				(!file_exists($file)
-				// tests embed with texwheelstests
-				AND !file_exists($file = dirname(__FILE__).'/'.$file)
-				)
-			)
-			return array();
-		require_once dirname(__FILE__).'/../../lib/yaml/sfYaml.php';
-		$tests = sfYaml::load($file);
-
-		if (!$tests)
-			return array();
-
-		// if a php file with same name exists
-		// include it as it contains callback functions
-		if ($f = preg_replace(',[.]yaml$,i','.php',$file)
-		  AND file_exists($f))
-			include_once $f;
-
-		return $tests;
 	}
 
 }

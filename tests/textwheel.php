@@ -15,6 +15,8 @@
 	$results = $testeur->test();
 
 	$err = array();
+	if (!count($results))
+		die ('Erreur : aucun test!');
 	foreach($results as $titre=>$res){
 		if (!$res['result'])
 			$err[] = display_error($titre,'TextWheel()->text("'.$res['test']->input.'")'

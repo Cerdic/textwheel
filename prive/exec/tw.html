@@ -14,7 +14,7 @@ include_spip('inc/revisions');
 
 if (_request('id_article'))
 	$w = " WHERE id_article=".intval(_request('id_article'));
-$s = spip_query('SELECT * FROM spip_articles'.$w);
+$s = spip_query('SELECT * FROM spip_articles'.$w.' LIMIT 0,1000');
 
 $erreurs = 10;
 $success = 0;

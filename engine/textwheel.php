@@ -72,9 +72,45 @@ class TextWheelRule {
 	}
 }
 
-class TextWheelRuleSet {
-	# list of rules
-	private $rules = array();
+abstract class TextWheelDataSet {
+	# list of datas
+	protected $datas = array();
+	
+	/**
+	 * Load a yaml file describing datas
+	 * @param string $file
+	 * @return array
+	 */
+	protected function loadFile($file, $default_path='') {
+		if (!$default_path)
+			$default_path = dirname(__FILE__).'/../wheels/';
+		if (!preg_match(',[.]yaml$,i',$file)
+			// external rules
+			OR
+				(!file_exists($file)
+				// rules embed with texwheels
+				AND !file_exists($file = $default_path.$file)
+				)
+			)
+			return array();
+		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
+		$rules = sfYaml::load($file);
+
+		if (!$rules)
+			return array();
+
+		// if a php file with same name exists
+		// include it as it contains callback functions
+		if ($f = preg_replace(',[.]yaml$,i','.php',$file)
+		  AND file_exists($f))
+			include_once $f;
+
+		return $rules;
+	}
+
+}
+
+class TextWheelRuleSet extends TextWheelDataSet {
 	# sort flag
 	private $sorted = true;
 
@@ -94,7 +130,7 @@ class TextWheelRuleSet {
 	 */
 	public function &getRules(){
 		$this->sort();
-		return $this->rules;
+		return $this->datas;
 	}
 
 	/**
@@ -106,7 +142,7 @@ class TextWheelRuleSet {
 		# cast array-rule to object
 		if (is_array($rule))
 			$rule = new TextWheelRule($rule);
-		$this->rules[] = $rule;
+		$this->datas[] = $rule;
 		$this->sorted = false;
 	}
 
@@ -129,7 +165,7 @@ class TextWheelRuleSet {
 
 		// rules can be a string : yaml filename
 		if (is_string($rules))
-			$rules = $this->loadRules($rules);
+			$rules = $this->loadFile($rules);
 
 		// rules can be an array of rules
 		if (is_array($rules) AND count($rules)){
@@ -137,54 +173,23 @@ class TextWheelRuleSet {
 			foreach ($rules as $i => $rule)
 				if (is_array($rule))
 					$rules[$i] = new TextWheelRule($rule);
-			$this->rules = array_merge($this->rules, $rules);
+			$this->datas = array_merge($this->datas, $rules);
 			$this->sorted = false;
 		}
 	}
 
 	/**
-	 * Load a yaml file describing rules
-	 * @param string $file
-	 * @return array
-	 */
-	private function loadRules($file) {
-		if (!preg_match(',[.]yaml$,i',$file)
-			// external rules
-			OR 
-				(!file_exists($file)
-				// rules embed with texwheels
-				AND !file_exists($file = dirname(__FILE__).'/../wheels/'.$file)
-				)
-			)
-			return array();
-		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
-		$rules = sfYaml::load($file);
-
-		if (!$rules)
-			return array();
-
-		// if a php file with same name exists
-		// include it as it contains callback functions
-		if ($f = preg_replace(',[.]yaml$,i','.php',$file)
-		  AND file_exists($f))
-			include_once $f;
-
-		return $rules;
-	}
-
-
-	/**
 	 * Sort rules according to priority and
 	 */
-	private function sort() {
+	protected function sort() {
 		if (!$this->sorted) {
 			$rulz = array();
-			foreach($this->rules as $index => $rule)
+			foreach($this->datas as $index => $rule)
 				$rulz[intval($rule->priority)][$index] = $rule;
 			ksort($rulz);
-			$this->rules = array();
+			$this->datas = array();
 			foreach($rulz as $rules)
-				$this->rules += $rules;
+				$this->datas += $rules;
 
 			$this->sorted = true;
 		}
@@ -192,7 +197,7 @@ class TextWheelRuleSet {
 }
 
 class TextWheel {
-	private $ruleset;
+	protected $ruleset;
 
 	/**
 	 * Constructor
@@ -235,7 +240,7 @@ class TextWheel {
 	 *
 	 * @param TextWheelRule $rule
 	 */
-	private function initRule(&$rule){
+	protected function initRule(&$rule){
 
 		# /begin optimization needed
 		# language specific
@@ -291,7 +296,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function apply(&$rule, &$t, &$count=null) {
+	protected function apply(&$rule, &$t, &$count=null) {
 		if (
 			!$rule->disabled
 			AND
@@ -328,7 +333,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_identity(&$match,&$replace,&$t,&$count){
+	protected function replace_identity(&$match,&$replace,&$t,&$count){
 	}
 
 	/**
@@ -338,7 +343,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_all(&$match,&$replace,&$t,&$count){
+	protected function replace_all(&$match,&$replace,&$t,&$count){
 		# special case: replace \0 with $t
 		#   replace: "A\0B" will surround the string with A..B
 		#   replace: "\0\0" will repeat the string
@@ -352,7 +357,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_all_cb(&$match,&$replace,&$t,&$count){
+	protected function replace_all_cb(&$match,&$replace,&$t,&$count){
 		$t = $replace($t);
 	}
 
@@ -364,7 +369,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_str(&$match,&$replace,&$t,&$count){
+	protected function replace_str(&$match,&$replace,&$t,&$count){
 		$t = str_replace($match, $replace, $t, $count);
 	}
 
@@ -376,7 +381,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_str_cb(&$match,&$replace,&$t,&$count){
+	protected function replace_str_cb(&$match,&$replace,&$t,&$count){
 		if (count($b = explode($match, $t)) > 1)
 			$t = join($replace($match), $b);
 	}
@@ -389,7 +394,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_preg(&$match,&$replace,&$t,&$count){
+	protected function replace_preg(&$match,&$replace,&$t,&$count){
 		$t = preg_replace($match, $replace, $t, -1, $count);
 	}
 
@@ -400,7 +405,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	private function replace_preg_cb(&$match,&$replace,&$t,&$count){
+	protected function replace_preg_cb(&$match,&$replace,&$t,&$count){
 		$t = preg_replace_callback($match, $replace, $t, -1, $count);
 	}
 }
