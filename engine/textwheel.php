@@ -356,7 +356,10 @@ class TextWheel {
 		# special case: replace \0 with $t
 		#   replace: "A\0B" will surround the string with A..B
 		#   replace: "\0\0" will repeat the string
-		$t = str_replace('\\0', $t, $replace);
+		if (strpos($replace, '\\0')!==FALSE)
+			$t = str_replace('\\0', $t, $replace);
+		else
+			$t = $replace;
 	}
 
 	/**
@@ -379,7 +382,8 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function replace_str(&$match,&$replace,&$t,&$count){
-		$t = str_replace($match, $replace, $t, $count);
+		if (!is_string($match) OR strpos($t,$match)!==FALSE)
+			$t = str_replace($match, $replace, $t, $count);
 	}
 
 	/**
@@ -391,8 +395,9 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function replace_str_cb(&$match,&$replace,&$t,&$count){
-		if (count($b = explode($match, $t)) > 1)
-			$t = join($replace($match), $b);
+		if (strpos($t,$match)!==FALSE)
+			if (count($b = explode($match, $t)) > 1)
+				$t = join($replace($match), $b);
 	}
 
 	/**
