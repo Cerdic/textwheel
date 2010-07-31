@@ -220,6 +220,24 @@ replace_str_ifmatch_no:
       replace: "sortie"
   output: "Un texte de test en entree"
 
+replace_str_array_ok:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: ["e","x"]
+      type: str
+      replace: ["a","b"]
+  output: "Un tabta da tast an antraa"
+
+replace_str_array_no:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: ["q","z"]
+      type: str
+      replace: ["a","b"]
+  output: "Un texte de test en entree"
+
 replace_str_cb:
   input: "Un texte de test en entree"
   ruleset:
