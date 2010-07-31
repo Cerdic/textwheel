@@ -53,12 +53,28 @@ spip-br:
   if_str: "\n_"
   priority: -20 # avant !spip-paragraphes
 
-spip-accolades:
+spip-intertitres:
+  # raccourcis en {{{..}}}
+  # intertitres
+  match: ['/(^|[^{])[{][{][{]/S', '/[}][}][}]($|[^}])/S']
+  replace: ["$1\n\n\n<h3 class=\"spip\">", "</h3>\n\n\n$1"]
+  if_str: '{{{'
+
+spip-gras:
+  # raccourcis en {{..}}
+  # strong
+  match: ['{{', '}}']
+  replace: ['<strong>', '</strong>']
+  type: str
+  if_str: '{{'
+
+spip-italiques:
   # raccourcis en {..}
-  # intertitres, strong, italiques
-  match: ['/(^|[^{])[{][{][{]/S', '/[}][}][}]($|[^}])/S', '/[{][{]/S', '/[}][}]/S', '/[{]/S', '/[}]/S']
-  replace: ["$1\n\n\n<h3 class=\"spip\">", "</h3>\n\n\n$1", '<strong>', '</strong>', '<i>', '</i>']
-  if_chars: '{'
+  # strong
+  match: ['{', '}']
+  replace: ['<i>', '</i>']
+  type: str
+  if_str: '{'
 
 spip-paragraphes:
   # paragraphes
