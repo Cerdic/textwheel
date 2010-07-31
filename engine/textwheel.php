@@ -112,7 +112,7 @@ abstract class TextWheelDataSet {
 
 class TextWheelRuleSet extends TextWheelDataSet {
 	# sort flag
-	private $sorted = true;
+	protected $sorted = true;
 
 	/**
 	 * Constructor

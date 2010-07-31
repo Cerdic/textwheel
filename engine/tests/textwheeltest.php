@@ -97,7 +97,7 @@ class TextWheelTestSet extends TextWheelDataSet {
 }
 
 class TextWheelTester {
-	private $testset;
+	protected $testset;
 
 	/**
 	 * Constructor
