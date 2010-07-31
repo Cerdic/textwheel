@@ -214,6 +214,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 
 class TextWheel {
 	protected $ruleset;
+	protected static $subwheel = array();
 
 	/**
 	 * Constructor
@@ -244,9 +245,20 @@ class TextWheel {
 		## apply each in order
 		foreach ($rules as $i=>$rule) #php4+php5
 			TextWheel::apply($rules[$i], $t);
-		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
-		#	$this->apply($rule, $t);
+		#foreach ($rules as &$rule) #smarter &reference, but php5 only
+		#	TextWheel::apply($rule, $t);
 		return $t;
+	}
+
+	/**
+	 * Get an internal global subwheel
+	 * read acces for annymous function only
+	 *
+	 * @param int $n
+	 * @return TextWheel
+	 */
+	public static function &getSubWheel($n){
+		return TextWheel::$subwheel[$n];
 	}
 
 	/**
@@ -268,13 +280,13 @@ class TextWheel {
 			$rule->is_callback = true;
 		}
 		elseif ($rule->is_wheel){
-			$var = '$m[0]'; $arg = '$m';
+			$n = count(TextWheel::$subwheel);
+			TextWheel::$subwheel[] = new TextWheel(new TextWheelRuleSet($rule->replace));
+			$var = '$m[0]';
 			if ($rule->type=='all' OR $rule->type=='str')
-				$var = $arg = '$t';
-			$code = 'static $w=null; if (!isset($w)) $w=new TextWheel(new TextWheelRuleSet('
-			. var_export($rule->replace,true) . '));
-			return $w->text('.$var.');';
-			$rule->replace = create_function($arg, $code);
+				$var = '$m';
+			$code = 'return TextWheel::getSubWheel('.$n.')->text('.$var.');';
+			$rule->replace = create_function('$m', $code);
 			$rule->is_wheel = false;
 			$rule->is_callback = true;
 		}
