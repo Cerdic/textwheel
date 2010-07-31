@@ -41,10 +41,9 @@ spip-ligne-horizontale:
   priority: -20 # avant !spip-paragraphes
 
 spip-alinea:
-  match: "\n--"
+  match: "/\n-- */"
   replace: "\n<br />&mdash;&nbsp;"
   if_str: "\n--"
-  type: str
   priority: -20 # avant !spip-paragraphes
 
 spip-puce:
