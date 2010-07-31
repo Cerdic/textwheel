@@ -243,7 +243,7 @@ class TextWheel {
 		$rules = & $this->ruleset->getRules();
 		## apply each in order
 		foreach ($rules as $i=>$rule) #php4+php5
-			$this->apply($rules[$i], $t);
+			TextWheel::apply($rules[$i], $t);
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
 		return $t;
@@ -256,7 +256,7 @@ class TextWheel {
 	 *
 	 * @param TextWheelRule $rule
 	 */
-	protected function initRule(&$rule){
+	protected static function initRule(&$rule){
 
 		# /begin optimization needed
 		# language specific
@@ -298,7 +298,7 @@ class TextWheel {
 			if ($rule->is_callback)
 				$rule->func_replace .= '_cb';
 		}
-		if (!method_exists($this, $rule->func_replace)){
+		if (!method_exists("TextWheel", $rule->func_replace)){
 			$rule->disabled = true;
 			$rule->func_replace = 'replace_identity';
 		}
@@ -312,31 +312,28 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function apply(&$rule, &$t, &$count=null) {
-		if (
-			!$rule->disabled
-			AND
-			(!isset($rule->if_chars)
-				OR ((strlen($rule->if_chars) == 1)
-					? (strpos($t, $rule->if_chars) !== false)
-					: (strtr($t, $rule->if_chars, str_pad(chr(0), strlen($rule->if_chars), chr(0))) !== $t)
-				)
-			)
-			AND
-			(!isset($rule->if_str)
-				OR (stripos($t, $rule->if_str) !== false)
-			)
-			AND
-			(!isset($rule->if_match)
-				OR preg_match($rule->if_match, $t)
-			)
-		) {
-			if (!isset($rule->func_replace))
-				$this->initRule($rule);
+	protected static function apply(&$rule, &$t, &$count=null) {
+		if ($rule->disabled)
+			return;
 
-			$func = $rule->func_replace;
-			$this->$func($rule->match,$rule->replace,$t,$count);
-		}
+		if (isset($rule->if_chars) AND
+				((strlen($rule->if_chars) == 1)
+					? (strpos($t, $rule->if_chars) === false)
+					: (strtr($t, $rule->if_chars, str_pad(chr(0), strlen($rule->if_chars), chr(0))) === $t)
+				))
+			return;
+
+		if (isset($rule->if_str) AND (stripos($t, $rule->if_str) === false))
+			return;
+		
+		if (isset($rule->if_match) AND !preg_match($rule->if_match, $t))
+			return;
+
+		if (!isset($rule->func_replace))
+			TextWheel::initRule($rule);
+
+		$func = $rule->func_replace;
+		TextWheel::$func($rule->match,$rule->replace,$t,$count);
 	}
 
 	/**
@@ -349,7 +346,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_identity(&$match,&$replace,&$t,&$count){
+	protected static function replace_identity(&$match,&$replace,&$t,&$count){
 	}
 
 	/**
@@ -359,7 +356,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_all(&$match,&$replace,&$t,&$count){
+	protected static function replace_all(&$match,&$replace,&$t,&$count){
 		# special case: replace \0 with $t
 		#   replace: "A\0B" will surround the string with A..B
 		#   replace: "\0\0" will repeat the string
@@ -373,7 +370,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_all_cb(&$match,&$replace,&$t,&$count){
+	protected static function replace_all_cb(&$match,&$replace,&$t,&$count){
 		$t = $replace($t);
 	}
 
@@ -385,7 +382,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_str(&$match,&$replace,&$t,&$count){
+	protected static function replace_str(&$match,&$replace,&$t,&$count){
 		$t = str_replace($match, $replace, $t, $count);
 	}
 
@@ -397,7 +394,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_str_cb(&$match,&$replace,&$t,&$count){
+	protected static function replace_str_cb(&$match,&$replace,&$t,&$count){
 		if (count($b = explode($match, $t)) > 1)
 			$t = join($replace($match), $b);
 	}
@@ -410,7 +407,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_preg(&$match,&$replace,&$t,&$count){
+	protected static function replace_preg(&$match,&$replace,&$t,&$count){
 		$t = preg_replace($match, $replace, $t, -1, $count);
 	}
 
@@ -421,7 +418,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected function replace_preg_cb(&$match,&$replace,&$t,&$count){
+	protected static function replace_preg_cb(&$match,&$replace,&$t,&$count){
 		$t = preg_replace_callback($match, $replace, $t, -1, $count);
 	}
 }
