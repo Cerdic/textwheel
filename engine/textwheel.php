@@ -316,11 +316,7 @@ class TextWheel {
 		if ($rule->disabled)
 			return;
 
-		if (isset($rule->if_chars) AND
-				((strlen($rule->if_chars) == 1)
-					? (strpos($t, $rule->if_chars) === false)
-					: (strtr($t, $rule->if_chars, str_pad(chr(0), strlen($rule->if_chars), chr(0))) === $t)
-				))
+		if (isset($rule->if_chars) AND (strpbrk($t, $rule->if_chars) === false))
 			return;
 
 		if (isset($rule->if_str) AND (stripos($t, $rule->if_str) === false))
@@ -431,3 +427,12 @@ if (!function_exists('stripos')) {
 	}
 }
 
+if (!function_exists('strpbrk')) {
+	function strpbrk($haystack, $char_list) {
+    $result = strcspn($haystack, $char_list);
+    if ($result != strlen($haystack)) {
+        return $result;
+    }
+    return false;
+	}
+}
