@@ -16,10 +16,35 @@ function tw_traiter_raccourcis($letexte) {
 	// Appeler les fonctions de pre_traitement
 	$letexte = pipeline('pre_propre', $letexte);
 
-	if (!isset($wheel))
-		$wheel = new TextWheel(
-			new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis'])
-		);
+	if (!isset($wheel)) {
+		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
+		if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('spip-intertitres')){
+			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_intertitre'],$rule->replace[0]);
+			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_intertitre'],$rule->replace[1]);
+			$ruleset->addRules(array('spip-intertitres'=>$rule));
+		}
+		if (isset($GLOBALS['debut_gras']) AND $rule=$ruleset->getRule('spip-gras')){
+			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_gras'],$rule->replace[0]);
+			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_gras'],$rule->replace[1]);
+			$ruleset->addRules(array('spip-gras'=>$rule));
+		}
+		if (isset($GLOBALS['debut_italique']) AND $rule=$ruleset->getRule('spip-italiques')){
+			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_italique'],$rule->replace[0]);
+			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_italique'],$rule->replace[1]);
+			$ruleset->addRules(array('spip-italiques'=>$rule));
+		}
+		if (isset($GLOBALS['ligne_horizontale']) AND $rule=$ruleset->getRule('spip-ligne-horizontale')){
+			$rule->replace = preg_replace(',<[^>]*>,Uims',$GLOBALS['ligne_horizontale'],$rule->replace);
+			$ruleset->addRules(array('spip-ligne-horizontale'=>$rule));
+		}
+		if (isset($GLOBALS['toujours_paragrapher']) AND !$GLOBALS['toujours_paragrapher']
+		  AND $rule=$ruleset->getRule('toujours-paragrapher')) {
+			$rule->disabled = true;
+			$ruleset->addRules(array('toujours-paragrapher'=>$rule));
+		}
+
+		$wheel = new TextWheel($ruleset);
+	}
 
 	// Gerer les notes (ne passe pas dans le pipeline)
 	$notes = charger_fonction('notes', 'inc');
