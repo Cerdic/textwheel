@@ -141,6 +141,19 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	}
 
 	/**
+	 * Get an existing named rule in order to override it
+	 *
+	 * @param string $name
+	 * @return string
+	 */
+	public function &getRule($name){
+		if (isset($this->datas[$name]))
+			return $this->datas[$name];
+		$result = null;
+		return $result;
+	}
+	
+	/**
 	 * get sorted Rules
 	 * @return array
 	 */
