@@ -93,8 +93,21 @@ abstract class TextWheelDataSet {
 				)
 			)
 			return array();
-		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
-		$rules = sfYaml::load($file);
+
+		$rules = false;
+		// yaml caching
+		if (defined('_TW_DIR_CACHE_YAML')
+			AND $hash = substr(md5($file),0,8)."-".substr(md5_file($file),0,8)
+			AND $fcache = _TW_DIR_CACHE_YAML."yaml-".basename($file,'.yaml')."-".$hash.".txt"
+			AND file_exists($fcache)
+			AND $c = file_get_contents($fcache)
+			)
+			$rules = unserialize($c);
+
+		if (!$rules){
+			require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
+			$rules = sfYaml::load($file);
+		}
 
 		if (!$rules)
 			return array();
@@ -105,6 +118,9 @@ abstract class TextWheelDataSet {
 		  AND file_exists($f))
 			include_once $f;
 
+		if ($fcache AND !$c)
+		 file_put_contents ($fcache, serialize($rules));
+		
 		return $rules;
 	}
 
