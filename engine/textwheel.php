@@ -452,6 +452,10 @@ class TextWheel {
 }
 
 class TextWheelDebug extends TextWheel {
+	static protected $t;
+	static protected $u;
+	static protected $w;
+
 	protected function timer($t='rien', $raw = false) {
 		static $time;
 		$a=time(); $b=microtime();
@@ -489,13 +493,24 @@ class TextWheelDebug extends TextWheel {
 			$this->timer($name);
 			$b = $t;
 			$this->apply($rules[$name], $t);
-			$GLOBALS['w'][$name] ++; # nombre de fois appliquee
-			if ($t !== $b) $GLOBALS['u'][$name] ++; # nombre de fois utile
-			$GLOBALS['t'][$name] += $this->timer($name, true); # timer
+			TextWheelDebug::$w[$name] ++; # nombre de fois appliquee
+			if ($t !== $b) TextWheelDebug::$u[$name] ++; # nombre de fois utile
+			TextWheelDebug::$t[$name] += $this->timer($name, true); # timer
 		}
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
 		return $t;
+	}
+
+	public static function outputDebug(){
+		if (isset(TextWheelDebug::$t)) {
+			$time = array_flip(array_map('strval', TextWheelDebug::$t));
+			krsort($time);
+			foreach($time as $t => $r) {
+				if(intval($t))
+					echo "<li><b>$t</b> ".htmlspecialchars($r)." (".intval(TextWheelDebug::$u[$r])." modifs/".intval(TextWheelDebug::$w[$r]).")</li>";
+			}
+		}
 	}
 }
 
