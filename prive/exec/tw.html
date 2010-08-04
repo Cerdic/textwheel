@@ -58,6 +58,6 @@ $time = array_flip(array_map('strval', $GLOBALS['t']));
 krsort($time);
 foreach($time as $t => $r) {
 	if(intval($t))
-		echo "<li><b>$t</b> ".htmlspecialchars($r)."</li>";
+		echo "<li><b>$t</b> ".htmlspecialchars($r)." (".intval($GLOBALS['u'][$r])." modifs/".intval($GLOBALS['w'][$r]).")</li>";
 }
 ?>

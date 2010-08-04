@@ -487,8 +487,11 @@ class TextWheelDebug extends TextWheel {
 		foreach ($rules as $name => $rule) #php4+php5
 		{
 			$this->timer($name);
+			$b = $t;
 			$this->apply($rules[$name], $t);
-			$GLOBALS['t'][$name] += $this->timer($name, true);
+			$GLOBALS['w'][$name] ++; # nombre de fois appliquee
+			if ($t !== $b) $GLOBALS['u'][$name] ++; # nombre de fois utile
+			$GLOBALS['t'][$name] += $this->timer($name, true); # timer
 		}
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
