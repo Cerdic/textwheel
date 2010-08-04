@@ -449,6 +449,32 @@ class TextWheel {
 	}
 }
 
+class TextWheelDebug extends TextWheel {
+	protected function timer($t='rien', $raw = false) {
+		static $time;
+		$a=time(); $b=microtime();
+		// microtime peut contenir les microsecondes et le temps
+		$b=explode(' ',$b);
+		if (count($b)==2) $a = end($b); // plus precis !
+		$b = reset($b);
+		if (!isset($time[$t])) {
+			$time[$t] = $a + $b;
+		} else {
+			$p = ($a + $b - $time[$t]) * 1000;
+			unset($time[$t]);
+			if ($raw) return $p;
+			if ($p < 1000)
+				$s = '';
+			else {
+				$s = sprintf("%d ", $x = floor($p/1000));
+				$p -= ($x*1000);
+			}
+			return $s . sprintf("%.3f ms", $p);
+		}
+	}
+}
+
+
 
 /* stripos for php4 */
 if (!function_exists('stripos')) {
