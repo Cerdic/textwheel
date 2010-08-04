@@ -340,14 +340,23 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function apply(&$rule, &$t, &$count=null) {
+		static $strstri = array();
+
 		if ($rule->disabled)
 			return;
 
 		if (isset($rule->if_chars) AND (strpbrk($t, $rule->if_chars) === false))
 			return;
 
-		if (isset($rule->if_str) AND (stripos($t, $rule->if_str) === false))
-			return;
+		if (isset($rule->if_str)) {
+			if (!isset($strstri[$rule->if_str]))
+				$strstri[$rule->if_str] = (strtolower($rule->if_str) === strtoupper($rule->if_str));
+
+			if ($strstri[$rule->if_str]) {
+				if (strpos($t, $rule->if_str) === false) return;
+			}
+			elseif (stripos($t, $rule->if_str) === false) return;
+		}
 		
 		if (isset($rule->if_match) AND !preg_match($rule->if_match, $t))
 			return;
