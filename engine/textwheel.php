@@ -486,9 +486,11 @@ class TextWheelDebug extends TextWheel {
 		## apply each in order
 		foreach ($rules as $name => $rule) #php4+php5
 		{
+			if (is_int($name))
+				$name .= ' '.$rule->match;
 			$this->timer($name);
 			$b = $t;
-			$this->apply($rules[$name], $t);
+			$this->apply($rule, $t);
 			$GLOBALS['w'][$name] ++; # nombre de fois appliquee
 			if ($t !== $b) $GLOBALS['u'][$name] ++; # nombre de fois utile
 			$GLOBALS['t'][$name] += $this->timer($name, true); # timer
