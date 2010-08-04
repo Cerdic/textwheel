@@ -13,7 +13,7 @@ toujours-paragrapher:
     type: all
     replace: "<p>\0"
 
--
+spip-ajouter-stop-p1:
     # Ajouter un espace aux <p> et un "STOP P"
     # transformer aussi les </p> existants en <p>, nettoyes ensuite
     if_str: "<"
@@ -21,13 +21,13 @@ toujours-paragrapher:
     match: "/^.*$/msS"
     replace: "<p>\0<STOP P>"
 
--
+spip-ajouter-stop-p2:
     if_str: "<"
     #if_match: ",<p\b,iS"
     match: ",</?p\b\s?(.*?)>,iS"
     replace: "<STOP P><p \1>"
 
--
+spip-fermer-para:
     # Fermer les paragraphes
     # y compris sur "STOP P"
     # en reperant les balises blocs XHTML
@@ -35,28 +35,28 @@ toujours-paragrapher:
     match: ",(<p\s.*)(</?(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset|style)[>[:space:]]),UimsS"
     replace: "\n\1</p>\n\2"
 
--
+spip-supprimer-stop-p:
     # Supprimer les marqueurs "STOP P"
     match: "<STOP P>"
     replace: ''
     type: str
 
--
+spip-reduire-blancs1:
     # Reduire les blancs dans les <p> 1/2
-    match: ",(<p\b.*>)\s*,UiuS"
+    match: ",(<p\b[^>]*>)\s*,UiuS"
     replace: "\1"
 
--
+spip-reduire-blancs2:
     # Reduire les blancs dans les <p> 2/2
-    match: ",\s*(</p\b.*>),UiuS"
-    replace: "\1"
+    match: ",\s*</p\b,UiuS"
+    replace: "</p"
 
--
+spip-suppr-para-vides:
     # Supprimer les <p xx></p> vides
     match: ",<p\b[^<>]*></p>\s*,iuS"
     replace: ""
 
--
+spip-renommer-para-normaux:
     # Renommer les paragraphes normaux
     match: "<p >"
     replace: "<p>"

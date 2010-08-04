@@ -256,10 +256,14 @@ class TextWheel {
 	public function text($t) {
 		$rules = & $this->ruleset->getRules();
 		## apply each in order
-		foreach ($rules as $i=>$rule) #php4+php5
-			TextWheel::apply($rules[$i], $t);
-		#foreach ($rules as &$rule) #smarter &reference, but php5 only
-		#	TextWheel::apply($rule, $t);
+		foreach ($rules as $name => $rule) #php4+php5
+		{
+spip_timer($name);
+			$this->apply($rules[$name], $t);
+$GLOBALS['t'][$name] += spip_timer($name, true);
+		}
+		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
+		#	$this->apply($rule, $t);
 		return $t;
 	}
 
