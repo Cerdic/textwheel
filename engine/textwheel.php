@@ -258,9 +258,7 @@ class TextWheel {
 		## apply each in order
 		foreach ($rules as $name => $rule) #php4+php5
 		{
-spip_timer($name);
 			$this->apply($rules[$name], $t);
-$GLOBALS['t'][$name] += spip_timer($name, true);
 		}
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
@@ -475,6 +473,26 @@ class TextWheelDebug extends TextWheel {
 			}
 			return $s . sprintf("%.3f ms", $p);
 		}
+	}
+
+	/**
+	 * Apply all rules of RuleSet to a text
+	 *
+	 * @param string $t
+	 * @return string
+	 */
+	public function text($t) {
+		$rules = & $this->ruleset->getRules();
+		## apply each in order
+		foreach ($rules as $name => $rule) #php4+php5
+		{
+			$this->timer($name);
+			$this->apply($rules[$name], $t);
+			$GLOBALS['t'][$name] += $this->timer($name, true);
+		}
+		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
+		#	$this->apply($rule, $t);
+		return $t;
 	}
 }
 

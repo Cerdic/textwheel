@@ -43,7 +43,7 @@ function tw_traiter_raccourcis($letexte) {
 			$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 		}
 
-		$wheel = new TextWheel($ruleset);
+		$wheel = new TextWheelDebug($ruleset);
 	}
 
 	// Gerer les notes (ne passe pas dans le pipeline)

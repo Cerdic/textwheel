@@ -55,7 +55,7 @@ echo "<br />Temps total TextWheel : $time_tw";
 echo "<br />Ecart : ".round(100*$time_tw/$time_propre-100,1)."%";
 
 $time = array_flip(array_map('strval', $GLOBALS['t']));
-ksort($time);
+krsort($time);
 foreach($time as $t => $r) {
 	if(intval($t))
 		echo "<li><b>$t</b> ".htmlspecialchars($r)."</li>";
