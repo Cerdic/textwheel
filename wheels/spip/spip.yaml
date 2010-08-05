@@ -43,10 +43,27 @@ tableaux:
 
 listes:
   match: "/\n-[*#]/S"
-  replace: replace_listes
   if_str: "\n-"
-  is_callback: Y
+  is_wheel: Y
   type: all
+  replace:
+    listes-decoupe-para:
+      match: ",(.*)(\z|\n[[:space:]]*\n),UmsS"
+      is_wheel: Y
+      pick_match: 1
+      replace:
+        listes-traite-para:
+          if_str: "\n-"
+          if_match: "/\n-[*#]/S"
+          type: all
+          replace: tw_traiter_listes2
+          is_callback: Y
+        listes-fin-para:
+          type: all
+          replace: "\0\n\n"
+    listes-trim-fin:
+      match: ",\n\n\z,S"
+      replace: ""
   priority: -20 # avant !paragraphes
 
 echappe-tags:
