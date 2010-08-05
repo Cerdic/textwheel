@@ -52,8 +52,9 @@ class TextWheelRule {
 	var $replace; # replace match with this expression
 
 	# optional
-	var $is_wheel; # flag to create a sub-wheel from rules given as replace
 	var $is_callback=false; # $replace is a callback function
+	var $is_wheel; # flag to create a sub-wheel from rules given as replace
+	var $pick_match = 0; # item to pick for sub-wheel replace
 
 	# optional
 	# language specific
@@ -325,7 +326,7 @@ class TextWheel {
 		elseif ($rule->is_wheel){
 			$n = count(TextWheel::$subwheel);
 			TextWheel::$subwheel[] = $this->createSubWheel($rule->replace);
-			$var = '$m[0]';
+			$var = '$m['.intval($rule->pick_match).']';
 			if ($rule->type=='all' OR $rule->type=='str')
 				$var = '$m';
 			$code = 'return TextWheel::getSubWheel('.$n.')->text('.$var.');';
