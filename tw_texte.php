@@ -14,7 +14,7 @@ $GLOBALS['spip_wheels']['echappe_js'] = array('spip/echappe-js.yaml');
 function tw_traiter_raccourcis($letexte) {
 	static $wheel;
 	// Appeler les fonctions de pre_traitement
-	$letexte = pipeline('pre_propre', $letexte);
+	#$letexte = pipeline('pre_propre', $letexte);
 
 	if (!isset($wheel)) {
 		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);

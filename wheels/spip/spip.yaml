@@ -2,6 +2,25 @@
     #
     # Si on nomme une regle, elle devient surchargeable
 
+traiter_retours_chariots_1:
+  # Harmonise les retours chariots et mange les paragraphes html
+  if_chars: "\r"
+  match: ",\r\n?,S"
+  replace: "\n"
+  priority: -40 # avant tout
+
+traiter_retours_chariots_2:
+  if_str: "<p"
+  match: ",<p[>[:space:]],iS"
+  replace: "\n\n\\0"
+  priority: -40 # avant tout
+
+traiter_retours_chariots_3:
+  if_str: "</p"
+  match: ",</p[>[:space:]],iS"
+  replace: "\\0\n\n"
+  priority: -40 # avant tout
+
 spip-init-trim:
   # trim
   type: all
