@@ -2,6 +2,12 @@
 
 define('_TW_DIR_CACHE_YAML',  sous_repertoire(_DIR_CACHE,"yaml"));
 
+# accepter un mode debug
+if (_request('var_debug_wheel'))
+	$GLOBALS['textWheel'] = 'TextWheelDebug';
+else
+	$GLOBALS['textWheel'] = 'TextWheel';
+	
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
 $GLOBALS['spip_wheels']['raccourcis'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
@@ -43,7 +49,7 @@ function tw_traiter_raccourcis($letexte) {
 			$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 		}
 
-		$wheel = new TextWheelDebug($ruleset);
+		$wheel = new $GLOBALS['textWheel']($ruleset);
 	}
 
 	// Gerer les notes (ne passe pas dans le pipeline)
@@ -64,7 +70,7 @@ function tw_traiter_raccourcis($letexte) {
 function tw_echappe_js($t) {
 	static $wheel = null;
 	if (!isset($wheel))
-		$wheel = new TextWheelDebug(
+		$wheel = new $GLOBALS['textWheel'](
 			new TextWheelRuleSet($GLOBALS['spip_wheels']['echappe_js'])
 		);
 
@@ -102,7 +108,7 @@ function tw_interdire_scripts($arg) {
 		if ($GLOBALS['filtrer_javascript']==1
 			OR ($GLOBALS['filtrer_javascript']==0 AND !test_espace_prive()))
 			$ruleset->addRules (array('echappe-js'=>array('disabled'=>true)));
-		$wheel = new TextWheelDebug($ruleset);
+		$wheel = new $GLOBALS['textWheel']($ruleset);
 	}
 
 	$t = $wheel->text($arg);
