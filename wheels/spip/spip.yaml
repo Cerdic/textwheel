@@ -106,12 +106,19 @@ spip-paragraphes:
   replace: ['<p>', '<p>', '<p>']
   priority: 0
 
-quote-intro:
+quote:
   # raccourci <quote>
+  match: ['<quote>', '</quote>']
+  replace: ['<blockquote class="spip"><p>', '</blockquote><p>']
+  if_str: '<quote>'
+  type: str
+
+intro:
+  # suppr raccourci <intro>
   # + suppression de <intro>
-  match: ['<quote>', '</quote>', '<intro>', '</intro>']
-  replace: ['<blockquote class="spip"><p>', '</blockquote><p>', '', '']
-  if_chars: '<'
+  match: ['<intro>', '</intro>']
+  replace: ['', '']
+  if_str: '<intro>'
   type: str
 
 -
