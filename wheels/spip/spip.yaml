@@ -56,7 +56,7 @@ spip-echappe-tags:
   priority: -20 # avant !spip-paragraphes
   is_wheel: Y
   replace:
-    -
+    spip-echappe-tags-sub:
       if_chars: "{}_-"
       match: ['{', '}', '_', '-']
       replace: ["\x1", "\x2", "\x3", "\x4"]
@@ -125,15 +125,22 @@ spip-paragraphes:
   replace: ['<p>', '<p>', '<p>']
   priority: 0
 
-quote-intro:
+quote:
   # raccourci <quote>
-  # + suppression de <intro>
-  match: ['<quote>', '</quote>', '<intro>', '</intro>']
-  replace: ['<blockquote class="spip"><p>', '</blockquote><p>', '', '']
-  if_chars: '<'
+  match: ['<quote>', '</quote>']
+  replace: ['<blockquote class="spip"><p>', '</blockquote><p>']
+  if_str: '<quote>'
   type: str
 
--
+intro:
+  # suppr raccourci <intro>
+  # + suppression de <intro>
+  match: ['<intro>', '</intro>']
+  replace: ['', '']
+  if_str: '<intro>'
+  type: str
+
+spip-br-restant:
   # eliminer les br restant en debut de texte
   match: '@^\n<br />@S'
   replace: ''

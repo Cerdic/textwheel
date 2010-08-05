@@ -1,7 +1,7 @@
 --- # paragrapher un texte contenant des <p> mal fermes
     #
 
--
+paragrapher-init-trim:
     # trim
     type: all
     is_callback: y
