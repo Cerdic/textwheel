@@ -31,9 +31,8 @@ fermer-para:
     # Fermer les paragraphes
     # y compris sur "STOP P"
     # en reperant les balises blocs XHTML
-    if_str: "<"
-    match: ",(<p\s.*)<(/?)(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset|style)\b,UimsS"
-    replace: "\n\1</p>\n<\2\3"
+    match: ",<p (.*)\s*<(/?)(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset|style)\b,UimsS"
+    replace: "\n<p \1</p>\n<\2\3"
 
 supprimer-stop-p:
     # Supprimer les marqueurs "STOP P"
@@ -41,21 +40,24 @@ supprimer-stop-p:
     replace: ''
     type: str
 
-reduire-blancs1:
-    # Reduire les blancs dans les <p> 1/2
-    match: ",(<p\b[^>]*>)\s*,UiuS"
-    replace: "\1"
-    disabled: Y
+## inutile
+#reduire-blancs1:
+#    # Reduire les blancs dans les <p> 1/2
+#    match: ",(<p [^>]*>)\s*,UiuS"
+#    replace: "\1"
+#    disabled: Y
 
 suppr-para-vides:
     # Supprimer les <p xx></p> vides
-    match: ",<p\b[^<>]*>\s*</p>\s*,iuS"
+    match: ",<p [^>]*>\s*</p>\s*,uS"
     replace: ""
 
-reduire-blancs2:
-    # Reduire les blancs dans les <p> 2/2
-    match: ",\s*</p\b,UiuS"
-    replace: "</p"
+## desormais implemente sous forme du \s* de fermer-para
+#reduire-blancs2:
+#    # Reduire les blancs dans les <p> 2/2
+#    match: ",\s*</p\b,UiuS"
+#    replace: "</p"
+#    disabled: Y
 
 renommer-para-normaux:
     # Renommer les paragraphes normaux
