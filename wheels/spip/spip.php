@@ -36,20 +36,3 @@ function replace_puce(){
 		$puce = "\n<br />".definir_puce()."&nbsp;";
 	return $puce;
 }
-
-
-/**
- * callback pour gerer les tableaux
- * (a remplacer par une inclusion de spip-tableaux.yaml ?)
- *
- * @staticvar TextWheel $wheel
- * @param string $texte
- * @return string
- */
-function spip_tableaux($texte) {
-	static $wheel;
-	if (!isset($wheel))
-		$wheel = new TextWheel(new TextWheelRuleSet('spip/spip-tableaux.yaml'));
-
-	return $wheel->text($texte);
-}

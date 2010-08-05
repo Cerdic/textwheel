@@ -16,8 +16,9 @@ spip-init-saut:
 
 spip-tableaux:
   type: all
-  replace: spip_tableaux
-  is_callback: Y
+  # included subwheel with relative filepath
+  replace: spip-tableaux.yaml
+  is_wheel: Y
   if_str: "\n|"
   priority: -30 # avant les raccourcis
 
