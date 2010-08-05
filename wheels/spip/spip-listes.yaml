@@ -7,21 +7,32 @@ listes-decoupe-para:
   is_wheel: Y
   pick_match: 1
   replace:
-    liste-init:
-      if_str: "\n-"
-      type: all
-      replace: tw_liste_start
-      is_callback: Y
     liste-traite-para:
       if_str: "\n-"
       if_match: "/\n-[*#]/S"
+      is_wheel: Y
       type: all
-      replace: tw_traiter_listes2
-      is_callback: Y
-    liste-ferme:
-      type: all
-      replace: tw_liste_end
-      is_callback: Y
+      replace:
+        liste-p-init:
+          type: all
+          replace: tw_liste_start
+          is_callback: Y
+        liste-p-item-ul:
+          # premiere parenthese ne compte pas dans la profondeur
+          # nombre de car dans la deuxieme parenthese = profondeur
+          match: ",(\n-)([*]*)([^*].*)(?=(\z|\n-)),UsS"
+          replace: tw_liste_item_ul
+          is_callback: Y
+        liste-p-item-ol:
+          # premiere parenthese ne compte pas dans la profondeur
+          # nombre de car dans la deuxieme parenthese = profondeur
+          match: ",(\n-)([#]*)([^#].*)(?=(\z|\n-)),UsS"
+          replace: tw_liste_item_ol
+          is_callback: Y
+        liste-p-ferme:
+          type: all
+          replace: tw_liste_end
+          is_callback: Y
     liste-fin-para:
       type: all
       replace: "\0\n\n"

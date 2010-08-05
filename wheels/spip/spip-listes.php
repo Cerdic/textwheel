@@ -10,7 +10,15 @@ function tw_liste_end($t){
 	return tw_liste_item($t,'end');
 }
 
-function tw_liste_item($t,$quoi='item'){
+function tw_liste_item_ul($t){
+	return tw_liste_item($t,'ul');
+}
+
+function tw_liste_item_ol($t){
+	return tw_liste_item($t,'ol');
+}
+
+function tw_liste_item($t,$quoi='ul'){
 	global $class_spip, $class_spip_plus;
 	static $niveau;
 	static $pile_li;
@@ -24,10 +32,22 @@ function tw_liste_item($t,$quoi='item'){
 			$pile_type = array();
 			$type = '';
 			break;
+		case 'end':
+			// retour sur terre
+			$ajout = '';
+			while ($niveau > 0) {
+				$ajout .= $pile_li[$niveau];
+				$ajout .= $pile_type[$niveau];
+				$niveau --;
+			}
+			$t .= $ajout;
+			break;
 
 		
-		case 'item':
-			$profond = strlen($t[1]);
+		case 'ul':
+		case 'ol':
+		default:
+			$profond = strlen($t[2]);
 
 			if ($profond > 0) {
 				$ajout='';
@@ -35,7 +55,7 @@ function tw_liste_item($t,$quoi='item'){
 				// changement de type de liste au meme niveau : il faut
 				// descendre un niveau plus bas, fermer ce niveau, et
 				// remonter
-				$nouv_type = (substr($t[1],0,1) == '*') ? 'ul' : 'ol';
+				$nouv_type = ($quoi=='ol') ? 'ol' : 'ul';
 				$change_type = ($type AND ($type <> $nouv_type) AND ($profond == $niveau)) ? 1 : 0;
 				$type = $nouv_type;
 
@@ -65,40 +85,12 @@ function tw_liste_item($t,$quoi='item'){
 				$pile_li[$profond] = "</li>";
 			}
 			else {
-				$ajout = "\n-";	// puce normale ou <hr>
+				$ajout = $t[1];	// puce normale ou <hr>
 			}
 
-			$t = $ajout . $t[2];
-			break;
-
-
-		case 'end':
-			// retour sur terre
-			$ajout = '';
-			while ($niveau > 0) {
-				$ajout .= $pile_li[$niveau];
-				$ajout .= $pile_type[$niveau];
-				$niveau --;
-			}
-			$t .= $ajout;
+			$t = $ajout . $t[3];
 			break;
 	}
 
 	return $t;
-}
-
-function tw_traiter_listes2($para){
-	$lignes = explode("\n-", "\n" . $para);
-
-	// ne pas toucher a la premiere ligne
-	list(,$debut) = each($lignes);
-	$texte .= $debut;
-
-	// chaque item a sa profondeur = nb d'etoiles
-	$type ='';
-	while (list(,$item) = each($lignes)) {
-		$texte .= preg_replace_callback(",^([*]*|[#]*)([^*#].*)$,sS", 'tw_liste_item', $item);
-	}
-	
-	return $texte;
 }
