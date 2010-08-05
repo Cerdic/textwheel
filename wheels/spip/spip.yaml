@@ -127,8 +127,9 @@ spip-poesie:
   # utilise une callback
   # a affiner en *decrivant* la callback? (replace:spip-poesie.yaml, pick:2)
   match: ",<poe(sie|try)>(.*)</poe\1>,UimsS"
-  replace: replace_poesie
-  is_callback: Y
+  replace: spip-poesie.yaml
+  pick_match: 2
+  is_wheel: Y
   if_str: '<poe'
   priority: -40
 

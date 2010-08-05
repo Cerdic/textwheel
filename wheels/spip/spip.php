@@ -5,21 +5,6 @@ include_spip('inc/texte');
 # require_once 'engine/textwheel.php';
 
 /**
- * callback pour poesie
- * (a remplacer par une sous-liste = indentation de yaml ?)
- *
- * @staticvar TextWheel $wheel
- * @param array $m
- * @return string
- */
-function replace_poesie($m) {
-	static $wheel;
-	if (!isset($wheel))
-		$wheel = new TextWheel(new TextWheelRuleSet('spip/spip-poesie.yaml'));
-	return $wheel->text($m[2]); # 2 : correspond au deuxieme element du match...
-}
-
-/**
  * callback pour les listes
  */
 function replace_listes(&$t){
