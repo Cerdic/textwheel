@@ -285,10 +285,18 @@ class TextWheel {
 	 */
 	protected static function initRule(&$rule){
 
-		# /begin optimization needed
 		# language specific
 		if ($rule->require)
 			require_once $rule->require;
+
+		# optimization: strpos or stripos?
+		if (isset($rule->strpos)) {
+			if (strtolower($rule->if_str) !== strtoupper($rule->if_str)) {
+				$rule->if_stri = $rule->if_str;
+				unset($rule->if_str);
+			}
+		}
+
 		if ($rule->create_replace){
 			$rule->replace = create_function('$m', $rule->replace);
 			$rule->create_replace = false;
@@ -305,7 +313,6 @@ class TextWheel {
 			$rule->is_wheel = false;
 			$rule->is_callback = true;
 		}
-		# /end
 
 		# optimization
 		$rule->func_replace = '';
@@ -340,7 +347,6 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function apply(&$rule, &$t, &$count=null) {
-		static $strstri = array();
 
 		if ($rule->disabled)
 			return;
@@ -348,16 +354,12 @@ class TextWheel {
 		if (isset($rule->if_chars) AND (strpbrk($t, $rule->if_chars) === false))
 			return;
 
-		if (isset($rule->if_str)) {
-			if (!isset($strstri[$rule->if_str]))
-				$strstri[$rule->if_str] = (strtolower($rule->if_str) === strtoupper($rule->if_str));
+		if (isset($rule->if_str) AND strpos($t, $rule->if_str) === false)
+			return;
 
-			if ($strstri[$rule->if_str]) {
-				if (strpos($t, $rule->if_str) === false) return;
-			}
-			elseif (stripos($t, $rule->if_str) === false) return;
-		}
-		
+		if (isset($rule->if_stri) AND stripos($t, $rule->if_str) === false)
+			return;
+
 		if (isset($rule->if_match) AND !preg_match($rule->if_match, $t))
 			return;
 
