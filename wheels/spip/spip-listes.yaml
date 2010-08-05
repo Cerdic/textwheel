@@ -1,45 +1,54 @@
 --- # Syntaxe des raccourcis SPIP, version 0.0.1
     #
     # Si on nomme une regle, elle devient surchargeable
-listes-decoupe-para:
-  match: ",(.*)(\z|\n[[:space:]]*\n),UmsS"
+
+-
+  if_match: "/\n-[*#]/S"
+  type: all
   is_wheel: Y
-  pick_match: 1
   replace:
-    liste-prepend:
-      type: all
-      replace: "\n\0"
 
-    liste-traite-para:
-      if_str: "\n-"
-      if_match: "/\n-[*#]/S"
+    listes-decoupe-para:
+      match: ",(.*)(\z|\n[[:space:]]*\n),UmsS"
       is_wheel: Y
-      type: all
+      pick_match: 1
       replace:
-        liste-p-init:
+    
+        liste-prepend:
           type: all
-          replace: tw_liste_init
-          is_callback: Y
-        liste-p-item-ul:
-          # premiere parenthese ne compte pas dans la profondeur
-          # nombre de car dans la deuxieme parenthese = profondeur
-          match: ",(\n-)([*]+)([^*].*)(?=(\z|\n-)),UsS"
-          replace: tw_liste_item_ul
-          is_callback: Y
-        liste-p-item-ol:
-          # premiere parenthese ne compte pas dans la profondeur
-          # nombre de car dans la deuxieme parenthese = profondeur
-          match: ",(\n-)([#]+)([^#].*)(?=(\z|\n-)),UsS"
-          replace: tw_liste_item_ol
-          is_callback: Y
-        liste-p-close:
+          replace: "\n\0"
+    
+        liste-traite-para:
+          if_str: "\n-"
+          if_match: "/\n-[*#]/S"
+          is_wheel: Y
           type: all
-          replace: tw_liste_close
-          is_callback: Y
-    liste-fin-para:
-      type: all
-      replace: "\0\n\n"
-
-listes-trim-fin:
-  match: ",\n\n\z,S"
-  replace: ""
+          replace:
+            liste-p-init:
+              type: all
+              replace: tw_liste_init
+              is_callback: Y
+            liste-p-item-ul:
+              # premiere parenthese ne compte pas dans la profondeur
+              # nombre de car dans la deuxieme parenthese = profondeur
+              match: ",\n-([*]+)([^*].*)(?=(\z|\n-)),UsS"
+              replace: tw_liste_item_ul
+              is_callback: Y
+            liste-p-item-ol:
+              # premiere parenthese ne compte pas dans la profondeur
+              # nombre de car dans la deuxieme parenthese = profondeur
+              match: ",\n-([#]+)([^#].*)(?=(\z|\n-)),UsS"
+              replace: tw_liste_item_ol
+              is_callback: Y
+            liste-p-close:
+              type: all
+              replace: tw_liste_close
+              is_callback: Y
+    
+        liste-fin-para:
+          type: all
+          replace: "\0\n\n"
+    
+    listes-trim-fin:
+      match: ",\n\n\z,S"
+      replace: ""

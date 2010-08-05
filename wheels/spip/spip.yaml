@@ -42,7 +42,6 @@ tableaux:
   priority: -30 # avant les raccourcis
 
 listes:
-  #if_match: "/\n-[*#]/S"
   if_str: "\n-"
   is_wheel: Y
   type: all
