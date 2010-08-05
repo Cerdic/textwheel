@@ -343,6 +343,22 @@ class TextWheel {
 					break;
 				case 'str':
 					$rule->func_replace = 'replace_str';
+					// test if quicker strtr usable
+					if (!$rule->is_callback
+						AND is_array($rule->match) AND is_array($rule->replace)
+						AND $c = array_map('strlen',$rule->match) 
+						AND $c = array_unique($c)
+						AND count($c)==1
+						AND reset($c)==1
+						AND $c = array_map('strlen',$rule->replace)
+						AND $c = array_unique($c)
+						AND count($c)==1
+						AND reset($c)==1
+						){
+						$rule->match = implode('',$rule->match);
+						$rule->replace = implode('',$rule->replace);
+						$rule->func_replace = 'replace_strtr';
+					}
 					break;
 				case 'preg':
 				default:
@@ -442,6 +458,18 @@ class TextWheel {
 	protected static function replace_str(&$match,&$replace,&$t,&$count){
 		if (!is_string($match) OR strpos($t,$match)!==FALSE)
 			$t = str_replace($match, $replace, $t, $count);
+	}
+
+	/**
+	 * Fast Static string replacement one char to one char
+	 *
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	protected static function replace_strtr(&$match,&$replace,&$t,&$count){
+		$t = strtr( $t, $match, $replace);
 	}
 
 	/**
