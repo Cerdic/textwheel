@@ -64,7 +64,7 @@ function tw_traiter_raccourcis($letexte) {
 function tw_echappe_js($t) {
 	static $wheel = null;
 	if (!isset($wheel))
-		$wheel = new TextWheel(
+		$wheel = new TextWheelDebug(
 			new TextWheelRuleSet($GLOBALS['spip_wheels']['echappe_js'])
 		);
 
@@ -102,7 +102,7 @@ function tw_interdire_scripts($arg) {
 		if ($GLOBALS['filtrer_javascript']==1
 			OR ($GLOBALS['filtrer_javascript']==0 AND !test_espace_prive()))
 			$ruleset->addRules (array('echappe-js'=>array('disabled'=>true)));
-		$wheel = new TextWheel($ruleset);
+		$wheel = new TextWheelDebug($ruleset);
 	}
 
 	$t = $wheel->text($arg);
