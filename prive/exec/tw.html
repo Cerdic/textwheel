@@ -7,6 +7,15 @@
 ]
 <?php
 
+echo "<h1>TextWheel</h1>";
+echo "<p>";
+if (_request('var_debug_wheel')) {
+	echo "<a href='" . parametre_url(self(), 'var_debug_wheel', ''). "'>Enlever le mode debug</a>";
+} else {
+	echo "<a href='" . parametre_url(self(), 'var_debug_wheel', '1'). "'>Activer le mode debug</a>";
+}
+echo " | <a href='" . self() . "'>Actualiser</a></p>";
+
 $notes = charger_fonction('notes', 'inc');
 include_spip('tw_texte');
 include_spip('inc/diff');
@@ -57,14 +66,7 @@ while ($t = sql_fetch($s)) {
 	}
 
 }
-echo "<h1>TextWheel</h1>";
-echo "<p>";
-if (_request('var_debug_wheel')) {
-	echo "<a href='" . parametre_url(self(), 'var_mode_debug', ''). "'>Enlever le mode debug</a>";
-} else {
-	echo "<a href='" . parametre_url(self(), 'var_mode_debug', '1'). "'>Activer le mode debug</a>";
-}
-echo " | <a href='" . self() . "'>Actualiser</a></p>";
+
 echo "$success articles compares avec succes";
 echo "<br />Temps total Propre : $time_propre";
 echo "<br />Temps total TextWheel : $time_tw";
