@@ -51,7 +51,7 @@ listes:
 
 echappe-tags:
   # voir restaure-tags plus bas
-  match: ",</?[a-z!][^<>]*[{}_-][^<>]*>,imsS"
+  match: ",</?[a-z!][^<>]*([{}]|\n[_-])[^<>]*>,imsS"
   if_chars: "<"
   priority: -20 # avant !paragraphes
   is_wheel: Y
