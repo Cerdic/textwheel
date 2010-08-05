@@ -2,17 +2,24 @@
     #
     # Si on nomme une regle, elle devient surchargeable
 
--
+spip-init-trim:
   # trim
   type: all
   is_callback: y
   replace: trim
-  priority: -20 # avant !spip-paragraphes
+  priority: -40 # avant tout
 
--
+spip-init-saut:
   type: all
   replace: "\n\0"
-  priority: -20 # avant !spip-paragraphes
+  priority: -40
+
+spip-tableaux:
+  type: all
+  replace: spip_tableaux
+  is_callback: Y
+  if_str: "\n|"
+  priority: -30 # avant les raccourcis
 
 spip-listes:
   match: "/\n-[*#]/S"

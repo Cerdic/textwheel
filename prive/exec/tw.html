@@ -38,14 +38,22 @@ while ($t = sql_fetch($s)) {
 		//echo "<li>article $t[id_article] OK</li>\n";
 	else {
 		echo "<li>article $t[id_article] <b>NOK</b>";
-		echo " <a href='#' onclick=\"jQuery(this).siblings('div').toggle();return false;\">Voir</a>";
+		if (_request('id_article') != $t['id_article'])
+			echo " <a href='?exec=tw&amp;id_article=$t[id_article]'>afficher</a>";
+		echo "</li>\n";
+		if (!$erreurs--) break;
+	}
+
+	if (_request('id_article')) {
+		include_spip('inc/suivi_versions');
 		$diff = new Diff(new DiffTexte);
 		$n = preparer_diff(str_replace('<','&#60;',$tw));
 		$o = preparer_diff(str_replace('<','&#60;',$pr));
-		echo "<div style='display:none;'><table><tr><td>".afficher_diff($diff->comparer($n,$o))."</td></tr></table></div>";
+		echo "<h4>diff (en vert, textwheel, en rouge, propre):</h4><div>".afficher_para_modifies(afficher_diff($diff->comparer($n,$o)))."</div>\n";
 
-		echo "</li>\n";
-		if (!$erreurs--) break;
+		echo "<h4>source:</h4> <textarea style='width:100%;height:300px'>".entites_html($t['texte'])."</textarea>\n";
+		echo "<h4>propre:</h4> <textarea style='width:100%;height:300px'>".entites_html($pr)."</textarea>\n";
+		echo "<h4>textwheel:</h4> <textarea style='width:100%;height:300px'>".entites_html($tw)."</textarea>\n";
 	}
 
 }
