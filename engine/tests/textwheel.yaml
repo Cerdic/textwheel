@@ -315,6 +315,17 @@ replace_preg_wheel:
       is_wheel: Y
   output: "Un tixti de tist en entree"
 
+replace_preg_wheel_inc:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "/en(tree)/"
+      type: preg
+      replace: subwheel.yaml
+      is_wheel: Y
+      pick_match: 1
+  output: "Un texte de test en trii"
+
 
 replace_default:
   input: "Un texte de test en entree"

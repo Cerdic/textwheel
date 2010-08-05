@@ -1,0 +1,8 @@
+--- # Tests unitaires
+    #
+    # Si on nomme un test, il devient surchargeable
+
+-
+  match: "e"
+  type: str
+  replace: "i"
