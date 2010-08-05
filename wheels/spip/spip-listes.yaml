@@ -1,12 +1,15 @@
 --- # Syntaxe des raccourcis SPIP, version 0.0.1
     #
     # Si on nomme une regle, elle devient surchargeable
-
 listes-decoupe-para:
   match: ",(.*)(\z|\n[[:space:]]*\n),UmsS"
   is_wheel: Y
   pick_match: 1
   replace:
+    liste-prepend:
+      type: all
+      replace: "\n\0"
+
     liste-traite-para:
       if_str: "\n-"
       if_match: "/\n-[*#]/S"
