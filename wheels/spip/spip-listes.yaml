@@ -18,7 +18,7 @@ listes-decoupe-para:
       replace:
         liste-p-init:
           type: all
-          replace: tw_liste_start
+          replace: tw_liste_init
           is_callback: Y
         liste-p-item-ul:
           # premiere parenthese ne compte pas dans la profondeur
@@ -32,9 +32,9 @@ listes-decoupe-para:
           match: ",(\n-)([#]+)([^#].*)(?=(\z|\n-)),UsS"
           replace: tw_liste_item_ol
           is_callback: Y
-        liste-p-ferme:
+        liste-p-close:
           type: all
-          replace: tw_liste_end
+          replace: tw_liste_close
           is_callback: Y
     liste-fin-para:
       type: all

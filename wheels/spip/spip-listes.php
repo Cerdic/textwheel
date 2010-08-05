@@ -2,12 +2,12 @@
 # not usefull as this file is include by the engine itself
 # require_once 'engine/textwheel.php';
 
-function tw_liste_start($t){
-	return tw_liste_item($t,'start');
+function tw_liste_init($t){
+	return tw_liste_item($t,'init');
 }
 
-function tw_liste_end($t){
-	return tw_liste_item($t,'end');
+function tw_liste_close($t){
+	return tw_liste_item($t,'close');
 }
 
 function tw_liste_item_ul($t){
@@ -26,13 +26,13 @@ function tw_liste_item($t,$quoi='ul'){
 	static $type;
 
 	switch ($quoi){
-		case 'start':
+		case 'init':
 			$niveau = 0;
 			$pile_li = array();
 			$pile_type = array();
 			$type = '';
 			break;
-		case 'end':
+		case 'close':
 			// retour sur terre
 			$ajout = '';
 			while ($niveau > 0) {
