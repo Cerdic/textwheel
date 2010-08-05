@@ -45,6 +45,7 @@ spip-reduire-blancs1:
     # Reduire les blancs dans les <p> 1/2
     match: ",(<p\b[^>]*>)\s*,UiuS"
     replace: "\1"
+    disabled: Y
 
 spip-reduire-blancs2:
     # Reduire les blancs dans les <p> 2/2
@@ -53,7 +54,7 @@ spip-reduire-blancs2:
 
 spip-suppr-para-vides:
     # Supprimer les <p xx></p> vides
-    match: ",<p\b[^<>]*></p>\s*,iuS"
+    match: ",<p\b[^<>]*>\s*</p>\s*,iuS"
     replace: ""
 
 spip-renommer-para-normaux:
