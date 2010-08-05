@@ -149,7 +149,6 @@ br-restant:
 poesie:
   # poesie|poetry
   # utilise une callback
-  # a affiner en *decrivant* la callback? (replace:spip-poesie.yaml, pick:2)
   match: ",<poe(sie|try)>(.*)</poe\1>,UimsS"
   replace: spip-poesie.yaml
   pick_match: 2
