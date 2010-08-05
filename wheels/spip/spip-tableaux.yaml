@@ -3,27 +3,19 @@
     # Si on nomme une regle, elle devient surchargeable
 
 
--
+spip-tableaux-init:
   match: "/^\n?[|]/S"
   replace: "\n\n|"
-  if_chars: "|"
-  priority: -30 # avant les racourcis
 
--
+spip-tableaux-start:
   match: "/\n\n+[|]/S"
   replace: "\n\n\n\n|"
-  if_chars: "|"
-  priority: -30 # avant les racourcis
 
--
+spip-tableaux-end:
   match: "/[|](\n\n+|\n?$)/S"
   replace: "|\n\n\n\n"
-  if_chars: "|"
-  priority: -30 # avant les racourcis
 
-spip-tableaux:
+spip-tableaux-middle:
   match: "/([^|])(\n[|].*[|]\n)([^|])/UmsS"
   replace: replace_tableaux
-  if_chars: "|"
   is_callback: Y
-  priority: -30 # avant !spip-paragraphes

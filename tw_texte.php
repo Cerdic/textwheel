@@ -4,7 +4,7 @@ define('_TW_DIR_CACHE_YAML',  sous_repertoire(_DIR_CACHE,"yaml"));
 
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
-$GLOBALS['spip_wheels']['raccourcis'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml','spip/spip-tableaux.yaml');
+$GLOBALS['spip_wheels']['raccourcis'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
 if (test_espace_prive ())
 	$GLOBALS['spip_wheels']['raccourcis'][] = 'spip/ecrire.yaml';
 

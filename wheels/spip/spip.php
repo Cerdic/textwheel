@@ -15,8 +15,8 @@ include_spip('inc/texte');
 function replace_poesie($m) {
 	static $wheel;
 	if (!isset($wheel))
-		$wheel = new TextWheel(new TextWheelRuleSet('spip-poesie.yaml'));
-	return $wheel->text($m[2]);
+		$wheel = new TextWheel(new TextWheelRuleSet('spip/spip-poesie.yaml'));
+	return $wheel->text($m[2]); # 2 : correspond au deuxieme element du match...
 }
 
 /**
@@ -35,4 +35,21 @@ function replace_puce(){
 	if (!isset($puce))
 		$puce = "\n<br />".definir_puce()."&nbsp;";
 	return $puce;
+}
+
+
+/**
+ * callback pour gerer les tableaux
+ * (a remplacer par une inclusion de spip-tableaux.yaml ?)
+ *
+ * @staticvar TextWheel $wheel
+ * @param string $texte
+ * @return string
+ */
+function spip_tableaux($texte) {
+	static $wheel;
+	if (!isset($wheel))
+		$wheel = new TextWheel(new TextWheelRuleSet('spip/spip-tableaux.yaml'));
+
+	return $wheel->text($texte);
 }
