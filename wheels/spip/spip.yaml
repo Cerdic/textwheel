@@ -51,14 +51,13 @@ listes:
 echappe-tags:
   # voir restaure-tags plus bas
   match: ",</?[a-z!][^<>]*([{}]|\n[_-])[^<>]*>,imsS"
-  if_chars: "<"
+  if_chars: "{}_-"
   priority: -20 # avant !paragraphes
   is_wheel: Y
   replace:
     echappe-tags-sub:
-      if_chars: "{}_-"
       match: ['{', '}', '_', '-']
-      replace: ["\x1", "\x2", "\x3", "\x4"]
+      replace: ["\x1\x1", "\x1\x2", "\x1\x3", "\x1\x4"]
       type: str
 
 ligne-horizontale:
@@ -160,7 +159,7 @@ poesie:
 
 restaure-tags:
   # voir echappe-tags ci-dessus
-  if_chars: "\x1\x2\x3\x4"
-  match: ["\x1", "\x2", "\x3", "\x4"]
+  if_chars: "\x1"
+  match: ["\x1\x1", "\x1\x2", "\x1\x3", "\x1\x4"]
   replace: ['{', '}', '_', '-']
   type: str
