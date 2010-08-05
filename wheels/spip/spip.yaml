@@ -21,19 +21,19 @@ traiter_retours_chariots_3:
   replace: "\\0\n\n"
   priority: -40 # avant tout
 
-spip-init-trim:
+init-trim:
   # trim
   type: all
   is_callback: y
   replace: trim
   priority: -40 # avant tout
 
-spip-init-saut:
+init-saut:
   type: all
   replace: "\n\0"
   priority: -40
 
-spip-tableaux:
+tableaux:
   type: all
   # included subwheel with relative filepath
   replace: spip-tableaux.yaml
@@ -41,60 +41,60 @@ spip-tableaux:
   if_str: "\n|"
   priority: -30 # avant les raccourcis
 
-spip-listes:
+listes:
   match: "/\n-[*#]/S"
   replace: replace_listes
   if_str: "\n-"
   is_callback: Y
   type: all
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
-spip-echappe-tags:
-  # voir spip-restaure-tags plus bas
+echappe-tags:
+  # voir restaure-tags plus bas
   match: ",</?[a-z!][^<>]*[{}_-][^<>]*>,imsS"
   if_chars: "<"
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
   is_wheel: Y
   replace:
-    spip-echappe-tags-sub:
+    echappe-tags-sub:
       if_chars: "{}_-"
       match: ['{', '}', '_', '-']
       replace: ["\x1", "\x2", "\x3", "\x4"]
       type: str
 
-spip-ligne-horizontale:
+ligne-horizontale:
   match: "/\n(----+|____+)/S"
   replace: "\n\n\n<hr class=\"spip\" />\n\n\n"
   if_chars: "\n"
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
-spip-alinea:
+alinea:
   match: "/\n-- */"
   replace: "\n<br />&mdash;&nbsp;"
   if_str: "\n--"
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
-spip-puce:
+puce:
   match: "/\n- */S"
   replace: replace_puce
   if_str: "\n-"
   is_callback: Y
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
-spip-br:
+br:
   match: "/\n_ +/S"
   replace: "\n<br />"
   if_str: "\n_"
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
-spip-intertitres-compliques:
+intertitres-compliques:
   # raccourcis imbriques en {{{{..}}}}
   # intertitres
   match: ['/(^|[^{])[{][{][{]/S', '/[}][}][}]($|[^}])/S']
   replace: ["$1\n\n\n<h3 class=\"spip\">", "</h3>\n\n\n$1"]
   if_str: '}}}}'
 
-spip-intertitres:
+intertitres:
   # raccourcis en {{{..}}}
   # intertitres
   match: ['{{{', '}}}']
@@ -102,7 +102,7 @@ spip-intertitres:
   if_str: '{{{'
   type: str
 
-spip-gras:
+gras:
   # raccourcis en {{..}}
   # strong
   match: ['{{', '}}']
@@ -110,7 +110,7 @@ spip-gras:
   type: str
   if_str: '{{'
 
-spip-italiques:
+italiques:
   # raccourcis en {..}
   # strong
   match: ['{', '}']
@@ -118,7 +118,7 @@ spip-italiques:
   type: str
   if_str: '{'
 
-spip-paragraphes:
+paragraphes:
   # paragraphes
   # lignes vides consecutives, br imbriques dans des p
   match: ["/(( *)\n){2,}(<br\s*\/?>)?/S", '/(?:<br\s*\/?>){2,}/S', "/<p>\n*(?:<br\s*\/?>\n*)*/S"]
@@ -140,15 +140,15 @@ intro:
   if_str: '<intro>'
   type: str
 
-spip-br-restant:
+br-restant:
   # eliminer les br restant en debut de texte
   match: '@^\n<br />@S'
   replace: ''
   if_str: "\n<br"
-  priority: -20 # avant !spip-paragraphes
+  priority: -20 # avant !paragraphes
 
 
-spip-poesie:
+poesie:
   # poesie|poetry
   # utilise une callback
   # a affiner en *decrivant* la callback? (replace:spip-poesie.yaml, pick:2)
@@ -159,8 +159,8 @@ spip-poesie:
   if_str: '<poe'
   priority: -40
 
-spip-restaure-tags:
-  # voir spip-echappe-tags ci-dessus
+restaure-tags:
+  # voir echappe-tags ci-dessus
   if_chars: "\x1\x2\x3\x4"
   match: ["\x1", "\x2", "\x3", "\x4"]
   replace: ['{', '}', '_', '-']

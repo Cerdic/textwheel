@@ -18,24 +18,24 @@ function tw_traiter_raccourcis($letexte) {
 
 	if (!isset($wheel)) {
 		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
-		if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('spip-intertitres')){
+		if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('intertitres')){
 			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_intertitre'],$rule->replace[0]);
 			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_intertitre'],$rule->replace[1]);
-			$ruleset->addRules(array('spip-intertitres'=>$rule));
+			$ruleset->addRules(array('intertitres'=>$rule));
 		}
-		if (isset($GLOBALS['debut_gras']) AND $rule=$ruleset->getRule('spip-gras')){
+		if (isset($GLOBALS['debut_gras']) AND $rule=$ruleset->getRule('gras')){
 			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_gras'],$rule->replace[0]);
 			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_gras'],$rule->replace[1]);
-			$ruleset->addRules(array('spip-gras'=>$rule));
+			$ruleset->addRules(array('gras'=>$rule));
 		}
-		if (isset($GLOBALS['debut_italique']) AND $rule=$ruleset->getRule('spip-italiques')){
+		if (isset($GLOBALS['debut_italique']) AND $rule=$ruleset->getRule('italiques')){
 			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_italique'],$rule->replace[0]);
 			$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_italique'],$rule->replace[1]);
-			$ruleset->addRules(array('spip-italiques'=>$rule));
+			$ruleset->addRules(array('italiques'=>$rule));
 		}
-		if (isset($GLOBALS['ligne_horizontale']) AND $rule=$ruleset->getRule('spip-ligne-horizontale')){
+		if (isset($GLOBALS['ligne_horizontale']) AND $rule=$ruleset->getRule('ligne-horizontale')){
 			$rule->replace = preg_replace(',<[^>]*>,Uims',$GLOBALS['ligne_horizontale'],$rule->replace);
-			$ruleset->addRules(array('spip-ligne-horizontale'=>$rule));
+			$ruleset->addRules(array('ligne-horizontale'=>$rule));
 		}
 		if (isset($GLOBALS['toujours_paragrapher']) AND !$GLOBALS['toujours_paragrapher']
 		  AND $rule=$ruleset->getRule('toujours-paragrapher')) {

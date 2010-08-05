@@ -3,19 +3,19 @@
     # Si on nomme une regle, elle devient surchargeable
 
 
-spip-tableaux-init:
+tableaux-init:
   match: "/^\n?[|]/S"
   replace: "\n\n|"
 
-spip-tableaux-start:
+tableaux-start:
   match: "/\n\n+[|]/S"
   replace: "\n\n\n\n|"
 
-spip-tableaux-end:
+tableaux-end:
   match: "/[|](\n\n+|\n?$)/S"
   replace: "|\n\n\n\n"
 
-spip-tableaux-middle:
+tableaux-middle:
   match: "/([^|])(\n[|].*[|]\n)([^|])/UmsS"
   replace: replace_tableaux
   is_callback: Y
