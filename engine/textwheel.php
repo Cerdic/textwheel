@@ -73,11 +73,11 @@ class TextWheelRule {
 }
 
 abstract class TextWheelDataSet {
-	# list of datas
-	protected $datas = array();
+	# list of data
+	protected $data = array();
 	
 	/**
-	 * Load a yaml file describing datas
+	 * Load a yaml file describing data
 	 * @param string $file
 	 * @return array
 	 */
@@ -94,7 +94,7 @@ abstract class TextWheelDataSet {
 			)
 			return array();
 
-		$datas = false;
+		$data = false;
 		// yaml caching
 		if (defined('_TW_DIR_CACHE_YAML')
 			AND $hash = substr(md5($file),0,8)."-".substr(md5_file($file),0,8)
@@ -102,14 +102,14 @@ abstract class TextWheelDataSet {
 			AND file_exists($fcache)
 			AND $c = file_get_contents($fcache)
 			)
-			$datas = unserialize($c);
+			$data = unserialize($c);
 
-		if (!$datas){
+		if (!$data){
 			require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
-			$datas = sfYaml::load($file);
+			$data = sfYaml::load($file);
 		}
 
-		if (!$datas)
+		if (!$data)
 			return array();
 
 		// if a php file with same name exists
@@ -119,9 +119,9 @@ abstract class TextWheelDataSet {
 			include_once $f;
 
 		if ($fcache AND !$c)
-		 file_put_contents ($fcache, serialize($datas));
+		 file_put_contents ($fcache, serialize($data));
 		
-		return $datas;
+		return $data;
 	}
 
 }
@@ -147,8 +147,8 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	 * @return string
 	 */
 	public function &getRule($name){
-		if (isset($this->datas[$name]))
-			return $this->datas[$name];
+		if (isset($this->data[$name]))
+			return $this->data[$name];
 		$result = null;
 		return $result;
 	}
@@ -159,7 +159,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	 */
 	public function &getRules(){
 		$this->sort();
-		return $this->datas;
+		return $this->data;
 	}
 
 	/**
@@ -171,7 +171,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 		# cast array-rule to object
 		if (is_array($rule))
 			$rule = new TextWheelRule($rule);
-		$this->datas[] = $rule;
+		$this->data[] = $rule;
 		$this->sorted = false;
 	}
 
@@ -202,7 +202,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 			foreach ($rules as $i => $rule)
 				if (is_array($rule))
 					$rules[$i] = new TextWheelRule($rule);
-			$this->datas = array_merge($this->datas, $rules);
+			$this->data = array_merge($this->data, $rules);
 			$this->sorted = false;
 		}
 	}
@@ -215,13 +215,13 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	protected function sort() {
 		if (!$this->sorted) {
 			$rulz = array();
-			foreach($this->datas as $index => $rule)
+			foreach($this->data as $index => $rule)
 				if (!$rule->disabled)
 					$rulz[intval($rule->priority)][$index] = $rule;
 			ksort($rulz);
-			$this->datas = array();
+			$this->data = array();
 			foreach($rulz as $rules)
-				$this->datas += $rules;
+				$this->data += $rules;
 
 			$this->sorted = true;
 		}

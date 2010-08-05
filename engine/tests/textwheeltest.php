@@ -56,7 +56,7 @@ class TextWheelTestSet extends TextWheelDataSet {
 	 * @return array
 	 */
 	public function &getTests(){
-		return $this->datas;
+		return $this->data;
 	}
 
 	/**
@@ -70,7 +70,7 @@ class TextWheelTestSet extends TextWheelDataSet {
 			$test = new TextWheelTest($test);
 		if (is_array($test->ruleset))
 			$test->ruleset = new TextWheelRuleSet($test->ruleset);
-		$this->datas[] = $$test;
+		$this->data[] = $$test;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class TextWheelTestSet extends TextWheelDataSet {
 				if (is_array($tests[$i]->ruleset))
 					$tests[$i]->ruleset = new TextWheelRuleSet($tests[$i]->ruleset);
 			}
-			$this->datas = array_merge($this->datas, $tests);
+			$this->data = array_merge($this->data, $tests);
 		}
 	}
 
