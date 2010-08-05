@@ -288,13 +288,22 @@ class TextWheel {
 	}
 
 	/**
+	 * Create SubWheel (can be overriden in debug class)
+	 * @param TextWheelRuleset $rules
+	 * @return TextWheel
+	 */
+	protected function &createSubWheel(&$rules){
+		return new TextWheel($rules);
+	}
+	
+	/**
 	 * Initializing a rule a first call
 	 * including file, creating function or wheel
 	 * optimizing tests
 	 *
 	 * @param TextWheelRule $rule
 	 */
-	protected static function initRule(&$rule){
+	protected function initRule(&$rule){
 
 		# language specific
 		if ($rule->require)
@@ -315,7 +324,7 @@ class TextWheel {
 		}
 		elseif ($rule->is_wheel){
 			$n = count(TextWheel::$subwheel);
-			TextWheel::$subwheel[] = new TextWheel($rule->replace);
+			TextWheel::$subwheel[] = $this->createSubWheel($rule->replace);
 			$var = '$m[0]';
 			if ($rule->type=='all' OR $rule->type=='str')
 				$var = '$m';
@@ -357,7 +366,7 @@ class TextWheel {
 	 * @param string $t
 	 * @param int $count
 	 */
-	protected static function apply(&$rule, &$t, &$count=null) {
+	protected function apply(&$rule, &$t, &$count=null) {
 
 		if ($rule->disabled)
 			return;
@@ -375,7 +384,7 @@ class TextWheel {
 			return;
 
 		if (!isset($rule->func_replace))
-			TextWheel::initRule($rule);
+			$this->initRule($rule);
 
 		$func = $rule->func_replace;
 		TextWheel::$func($rule->match,$rule->replace,$t,$count);
@@ -478,6 +487,14 @@ class TextWheelDebug extends TextWheel {
 	static protected $u;
 	static protected $w;
 
+	/**
+	 * Timer for profiling
+	 * 
+	 * @staticvar int $time
+	 * @param string $t
+	 * @param bool $raw
+	 * @return int/strinf
+	 */
 	protected function timer($t='rien', $raw = false) {
 		static $time;
 		$a=time(); $b=microtime();
@@ -526,6 +543,9 @@ class TextWheelDebug extends TextWheel {
 		return $t;
 	}
 
+	/**
+	 * Ouputs data stored for profiling/debuging purposes
+	 */
 	public static function outputDebug(){
 		if (isset(TextWheelDebug::$t)) {
 			$time = array_flip(array_map('strval', TextWheelDebug::$t));
@@ -536,6 +556,16 @@ class TextWheelDebug extends TextWheel {
 			}
 		}
 	}
+
+	/**
+	 * Create SubWheel (can be overriden in debug class)
+	 * @param TextWheelRuleset $rules
+	 * @return TextWheel
+	 */
+	protected function &createSubWheel(&$rules){
+		return new TextWheelDebug($rules);
+	}
+
 }
 
 
