@@ -31,13 +31,13 @@
             liste-p-item-ul:
               # premiere parenthese ne compte pas dans la profondeur
               # nombre de car dans la deuxieme parenthese = profondeur
-              match: ",\n-([*]+)([^*].*)(?=(\z|\n-)),UsS"
+              match: ",(\n-)([*]+)([^*].*)(?=(\z|\n-)),UsS"
               replace: tw_liste_item_ul
               is_callback: Y
             liste-p-item-ol:
               # premiere parenthese ne compte pas dans la profondeur
               # nombre de car dans la deuxieme parenthese = profondeur
-              match: ",\n-([#]+)([^#].*)(?=(\z|\n-)),UsS"
+              match: ",(\n-)([#]+)([^#].*)(?=(\z|\n-)),UsS"
               replace: tw_liste_item_ol
               is_callback: Y
             liste-p-close:
