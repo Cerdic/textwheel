@@ -47,15 +47,15 @@ reduire-blancs1:
     replace: "\1"
     disabled: Y
 
-reduire-blancs2:
-    # Reduire les blancs dans les <p> 2/2
-    match: ",\s*</p\b,UiuS"
-    replace: "</p"
-
 suppr-para-vides:
     # Supprimer les <p xx></p> vides
     match: ",<p\b[^<>]*>\s*</p>\s*,iuS"
     replace: ""
+
+reduire-blancs2:
+    # Reduire les blancs dans les <p> 2/2
+    match: ",\s*</p\b,UiuS"
+    replace: "</p"
 
 renommer-para-normaux:
     # Renommer les paragraphes normaux
