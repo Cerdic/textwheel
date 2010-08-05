@@ -1,6 +1,12 @@
 --- # callback pour <poesie> !spip.yaml
 
 -
+    # trim
+    type: all
+    replace: trim
+    is_callback: y
+
+-
     # nettoyer les sauts de ligne \r
     match: ",\r\n?,S"
     replace: "\n"
@@ -12,12 +18,6 @@
     # deux sauts de ligne => div
     match: "/\n+/"
     replace: "</div>\n<div>"
-
--
-    # trim
-    type: all
-    replace: trim
-    is_callback: y
 
 -
     # entourer avec un blockquote.spip_poesie

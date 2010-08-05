@@ -130,6 +130,7 @@ spip-poesie:
   replace: replace_poesie
   is_callback: Y
   if_str: '<poe'
+  priority: -40
 
 spip-restaure-tags:
   # voir spip-echappe-tags ci-dessus
