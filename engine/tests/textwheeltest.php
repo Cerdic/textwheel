@@ -46,9 +46,9 @@ class TextWheelTestSet extends TextWheelDataSet {
 	 *
 	 * @param array/string $testset
 	 */
-	public function TextWheelTestSet($testset = array()) {
+	public function TextWheelTestSet($testset = array(), $filepath='') {
 		if ($testset)
-			$this->addTests($testset);
+			$this->addTests($testset, $filepath);
 	}
 
 	/**
@@ -79,16 +79,21 @@ class TextWheelTestSet extends TextWheelDataSet {
 	 *
 	 * @param array/string $tests
 	 */
-	public function addTests($tests) {
-		if (is_string($tests))
-			$tests = $this->loadFile($tests,dirname(__FILE__).'/');
+	public function addTests($tests, $filepath='') {
+		if (!$filepath) $filepath = dirname(__FILE__).'/';
+		if (is_string($tests)) {
+			$file = $tests; // keep the real filename
+			$tests = $this->loadFile($file,$filepath);
+			$filepath = dirname($file).'/';
+		}
+
 		if (is_array($tests) AND count($tests)){
 			# cast array-tests to objects
 			foreach ($tests as $i => $test){
 				if (is_array($test))
 					$tests[$i] = new TextWheelTest($test);
 				if (is_array($tests[$i]->ruleset))
-					$tests[$i]->ruleset = new TextWheelRuleSet($tests[$i]->ruleset);
+					$tests[$i]->ruleset = new TextWheelRuleSet($tests[$i]->ruleset,$filepath);
 			}
 			$this->data = array_merge($this->data, $tests);
 		}

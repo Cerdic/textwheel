@@ -81,7 +81,7 @@ abstract class TextWheelDataSet {
 	 * @param string $file
 	 * @return array
 	 */
-	protected function loadFile($file, $default_path='') {
+	protected function loadFile(&$file, $default_path='') {
 		if (!$default_path)
 			$default_path = dirname(__FILE__).'/../wheels/';
 		if (!preg_match(',[.]yaml$,i',$file)
@@ -135,9 +135,9 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	 *
 	 * @param array/string $ruleset
 	 */
-	public function TextWheelRuleSet($ruleset = array()) {
+	public function TextWheelRuleSet($ruleset = array(), $filepath='') {
 		if ($ruleset)
-			$this->addRules($ruleset);
+			$this->addRules($ruleset, $filepath);
 	}
 
 	/**
@@ -184,7 +184,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	 *
 	 * @param array/string $rules
 	 */
-	public function addRules($rules) {
+	public function addRules($rules, $filepath='') {
 		// rules can be an array of filename
 		if (is_array($rules) AND is_string(reset($rules))) {
 			foreach($rules as $i=>$filename)
@@ -193,15 +193,23 @@ class TextWheelRuleSet extends TextWheelDataSet {
 		}
 
 		// rules can be a string : yaml filename
-		if (is_string($rules))
-			$rules = $this->loadFile($rules);
+		if (is_string($rules)) {
+			$file = $rules; // keep the real filename
+			$rules = $this->loadFile($file, $filepath);
+			$filepath = dirname($file).'/';
+		}
 
 		// rules can be an array of rules
 		if (is_array($rules) AND count($rules)){
 			# cast array-rules to objects
-			foreach ($rules as $i => $rule)
+			foreach ($rules as $i => $rule) {
 				if (is_array($rule))
 					$rules[$i] = new TextWheelRule($rule);
+				// load subwheels when necessary
+				if ($rules[$i]->is_wheel){
+					$rules[$i]->replace = new TextWheelRuleSet($rules[$i]->replace, $filepath);
+				}
+			}
 			$this->data = array_merge($this->data, $rules);
 			$this->sorted = false;
 		}
@@ -307,7 +315,7 @@ class TextWheel {
 		}
 		elseif ($rule->is_wheel){
 			$n = count(TextWheel::$subwheel);
-			TextWheel::$subwheel[] = new TextWheel(new TextWheelRuleSet($rule->replace));
+			TextWheel::$subwheel[] = new TextWheel($rule->replace);
 			$var = '$m[0]';
 			if ($rule->type=='all' OR $rule->type=='str')
 				$var = '$m';

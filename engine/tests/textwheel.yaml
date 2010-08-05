@@ -262,6 +262,16 @@ replace_str_wheel:
       is_wheel: Y
   output: "Un texte de test en intrii"
 
+replace_str_wheel_inc:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "entree"
+      type: str
+      replace: subwheel.yaml
+      is_wheel: Y
+  output: "Un texte de test en intrii"
+
 replace_preg:
   input: "Un texte de test en entree"
   ruleset:
