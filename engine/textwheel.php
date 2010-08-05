@@ -209,12 +209,15 @@ class TextWheelRuleSet extends TextWheelDataSet {
 
 	/**
 	 * Sort rules according to priority and
+	 * purge disabled rules
+	 *
 	 */
 	protected function sort() {
 		if (!$this->sorted) {
 			$rulz = array();
 			foreach($this->datas as $index => $rule)
-				$rulz[intval($rule->priority)][$index] = $rule;
+				if (!$rule->disabled)
+					$rulz[intval($rule->priority)][$index] = $rule;
 			ksort($rulz);
 			$this->datas = array();
 			foreach($rulz as $rules)
