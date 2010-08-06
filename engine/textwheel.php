@@ -585,7 +585,12 @@ class TextWheelDebug extends TextWheel {
 			<style type='text/css'>
 				.textwheeldebug table { margin:1em 0; }
 				.textwheeldebug th,.textwheeldebug td { padding-left: 15px }
+				.textwheeldebug .prof-0 .number { padding-right: 60px }
+				.textwheeldebug .prof-1 .number { padding-right: 30px }
+				.textwheeldebug .prof-1 .name { padding-left: 30px }
+				.textwheeldebug .prof-2 .name { padding-left: 60px }
 				.textwheeldebug .zero { color:orange; }
+				.textwheeldebug .number { text-align:right; }
 			</style>
 			<table>
 			<caption>Temps par rule</caption>
@@ -594,7 +599,7 @@ class TextWheelDebug extends TextWheel {
 				$applications = intval(TextWheelDebug::$u[$r]);
 				$total += $t;
 				if(intval($t))
-					echo "<tr><td style='text-align:right'><b>".round($t)."</b>&nbsp;ms</td><td> ".htmlspecialchars($r)."</td>
+					echo "<tr><td class='number'><b>".round($t)."</b>&nbsp;ms</td><td> ".htmlspecialchars($r)."</td>
 					<td"
 					. (!$applications ? " class='zero'" : "")
 					.">".$applications."/".intval(TextWheelDebug::$w[$r])."</td></tr>";
@@ -605,11 +610,8 @@ class TextWheelDebug extends TextWheel {
 			<table>
 			<caption>Temps total par rule</caption>
 			<thead><tr><th>temps</th><th>rule</th></tr></thead>\n";
-			foreach ($GLOBALS['totaux'] as $cause => $duree)
-				echo "<tr>
-					<td style='text-align:right'><b>".intval($duree)."</b>&nbsp;ms</td>
-					<td>".htmlspecialchars($cause)."</td>
-					</tr>\n";
+			ksort($GLOBALS['totaux']);
+			TextWheelDebug::outputTotal($GLOBALS['totaux']);
 			echo "</table>";
 			# somme des temps des rules, ne tient pas compte des subwheels
 			echo "<p>temps total rules: ".round($total)."&nbsp;ms</p>\n";
@@ -617,6 +619,20 @@ class TextWheelDebug extends TextWheel {
 		}
 	}
 
+	public static function outputTotal($liste, $profondeur=0) {
+		ksort($liste);
+		foreach ($liste as $cause => $duree) {
+			if (is_array($duree)) {
+				TextWheelDebug::outputTotal($duree, $profondeur+1);
+			} else {
+				echo "<tr class='prof-$profondeur'>
+					<td class='number'><b>".intval($duree)."</b>&nbsp;ms</td>
+					<td class='name'>".htmlspecialchars($cause)."</td>
+					</tr>\n";
+			}
+		}
+	}
+	
 	/**
 	 * Create SubWheel (can be overriden in debug class)
 	 * @param TextWheelRuleset $rules

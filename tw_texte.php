@@ -56,28 +56,28 @@ function tw_traiter_raccourcis($letexte) {
 		$wheel = new $GLOBALS['textWheel']($ruleset);
 	}
 
-	if($debug) $GLOBALS['totaux']['init'] += spip_timer('init', true);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['init'] += spip_timer('init', true);
 
 	// Gerer les notes (ne passe pas dans le pipeline)
 	if($debug) spip_timer('notes');
 	$notes = charger_fonction('notes', 'inc');
 	list($letexte, $mes_notes) = $notes($letexte);
-	if($debug) $GLOBALS['totaux']['notes'] += spip_timer('notes', true);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['notes'] += spip_timer('notes', true);
 
 	if($debug) spip_timer('text');
 	$letexte = $wheel->text($letexte);
-	if($debug) $GLOBALS['totaux']['text'] += spip_timer('text', true);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['text'] += spip_timer('text', true);
 
 	// Appeler les fonctions de post-traitement
 	if($debug) spip_timer('post_propre');
 	$letexte = pipeline('post_propre', $letexte);
-	if($debug) $GLOBALS['totaux']['post_propre'] += spip_timer('post_propre', true);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['post_propre'] += spip_timer('post_propre', true);
 
 	if($debug) spip_timer('mesnotes');
 	if ($mes_notes) {
 		$notes($mes_notes);
 	}
-	if($debug) $GLOBALS['totaux']['mesnotes'] += spip_timer('mesnotes', true);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['mesnotes'] += spip_timer('mesnotes', true);
 
 	return $letexte;
 }
@@ -171,22 +171,22 @@ function expanser_liens_tw($texte, $connect='')
 			$regs[$k] = $lien($r, $titre, '', $bulle, $hlang, '', $connect);
 		}
 	}
-	if($debug) $GLOBALS['totaux']['liensmatch'] += spip_timer('liensmatch', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['liensmatch'] += spip_timer('liensmatch', true);
 
 
 	// on passe a traiter_modeles la liste des liens reperes pour lui permettre
 	// de remettre le texte d'origine dans les parametres du modele
 	if($debug) spip_timer('traiter_modeles');
 	$texte = traiter_modeles($texte, false, false, $connect, array($inserts, $sources));
-	if($debug) $GLOBALS['totaux']['traiter_modeles'] += spip_timer('traiter_modeles', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['traiter_modeles'] += spip_timer('traiter_modeles', true);
 
 	if($debug) spip_timer('corriger_typo');
  	$texte = corriger_typo($texte);
-	if($debug) $GLOBALS['totaux']['corriger_typo'] += spip_timer('corriger_typo', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo'] += spip_timer('corriger_typo', true);
 
 	if($debug) spip_timer('reinserts');
 	$texte = str_replace($inserts, $regs, $texte);
-	if($debug) $GLOBALS['totaux']['reinserts'] += spip_timer('reinserts', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['reinserts'] += spip_timer('reinserts', true);
 
 	return $texte;
 }

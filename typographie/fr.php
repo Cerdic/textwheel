@@ -50,7 +50,7 @@ function typographie_fr($letexte) {
 
 	if($debug) spip_timer('trans');
 	$letexte = strtr($letexte, $trans);
-	if($debug) $GLOBALS['totaux']['trans'] += spip_timer('trans', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['trans'] += spip_timer('trans', true);
 
 	if($debug) spip_timer('cherche1');
 	# la typo du ; risque de clasher avec les entites &xxx;
@@ -70,11 +70,11 @@ function typographie_fr($letexte) {
 		/* 4 */		'\0~'
 	);
 	$letexte = preg_replace($cherche1, $remplace1, $letexte);
-	if($debug) $GLOBALS['totaux']['cherche1'] += spip_timer('cherche1', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche1'] += spip_timer('cherche1', true);
 	if($debug) spip_timer('chercheespaces');
 	if (strpos($letexte, '~') !== false)
 		$letexte = preg_replace("/ *~+ */S", "~", $letexte);
-	if($debug) $GLOBALS['totaux']['chercheespaces'] += spip_timer('chercheespaces', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['chercheespaces'] += spip_timer('chercheespaces', true);
 
 	if($debug) spip_timer('cherche2');
 	$cherche2 = array(
@@ -88,7 +88,7 @@ function typographie_fr($letexte) {
 		'&nbsp;'
 	);
 	$letexte = preg_replace($cherche2, $remplace2, $letexte);
-	if($debug) $GLOBALS['totaux']['cherche2'] += spip_timer('cherche2', true);
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche2'] += spip_timer('cherche2', true);
 
 	return $letexte;
 }
