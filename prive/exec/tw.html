@@ -13,7 +13,7 @@ table.spip.stats th, table.spip.stats td{border:0;}
 .tw_erreur {margin:1em 0; padding:.5em; background:#fff; border:1px solid #ff7f00;}
 .tw_erreur li {margin-left:1em;}
 #navigation{display:none;}
-#contenu{width:100%;}
+#contenu, .large #contenu {width:100%;}
 .semi-colomn {width:50%; float:left;}
 </style>
 <script type='text/javascript'>
@@ -38,7 +38,7 @@ $(document).ready(function(){
 		<a href="[(#SELF|parametre_url{var_debug_wheel,[(#ENV{var_debug_wheel}|?{1,''})]}|parametre_url{id_article,''})]">Retour</a>
 	]
 </p>
-<div class='semi-colomn'>
+
 <?php
 
 function save_stats($ecart, $article, $get=false) {
@@ -72,14 +72,18 @@ $s = spip_query('SELECT * FROM spip_articles'.$w.' LIMIT 0,1000');
 
 // faire les inits communes
 $init = 'oh la la';
+	#// ne pas les prendre dans le debug
+	#$debug = _request('var_debug_wheel');
+	#set_request('var_debug_wheel','');
 propre($init);
 tw_propre($init);
+	#set_request('var_debug_wheel', $debug);
 
 
 $erreurs = 10;
 $success = 0;
 $nombre_statistiques = 5;
-$time_propre = $time_tw = 0;
+$time_total_propre = $time_total_propre = 0;
 $lien = parametre_url(self(), 'var_debug_wheel', _request('var_debug_wheel'));
 $erreur_open = false;
 
@@ -134,6 +138,7 @@ if ($erreur_open) { echo "</ul>"; }
 $stats = save_stats('', '', true);
 
 echo "
+<div class='semi-colomn'>
 <table class='spip stats'>
 	<caption>Statistiques Globales</caption>
 	<tr class='row_odd'>
