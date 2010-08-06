@@ -119,7 +119,8 @@ italiques:
 paragraphes:
   # paragraphes
   # lignes vides consecutives, br imbriques dans des p
-  match: ["/ *\n(?: *\n)+(?:<br\b[^>]*>)*/S", '/(?:<br\b[^>]*>){2,}/S', "/(<p\b[^>]*>)\n*(?:<br\b.*>\n*)+/S"]
+  # mais attention pas les br trop riches (ex: br style=clear:both)
+  match: ["/ *\n(?: *\n)+(?:<br ?\/?>)*/S", '/(?:<br\b[^>]*>){2,}\s*/S', "/(<p\b[^>]*>)\n*(?:<br ?\/?>\n*)+/S"]
   replace: ['<p>', '<p>', '\1']
   priority: 0
 
