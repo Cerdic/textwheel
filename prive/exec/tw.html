@@ -38,6 +38,24 @@ $(document).ready(function(){
 
 <?php
 
+function save_stats($ecart, $article, $get=false) {
+	static $stats = array();
+	if ($get) {
+		asort($stats);
+		return $stats;
+	}
+	$stats[$article] = $ecart;
+}
+
+// Function to calculate square of value - mean
+function sd_square($x, $mean) { return pow($x - $mean,2); }
+
+// Function to calculate standard deviation (uses sd_square)   
+function sd($array) {
+	// square root of sum of squares devided by N-1
+	return sqrt(array_sum(array_map("sd_square", $array, array_fill(0,count($array), (array_sum($array) / count($array)) ) ) ) / (count($array)-1) );
+}
+
 $notes = charger_fonction('notes', 'inc');
 include_spip('tw_texte');
 include_spip('inc/diff');
@@ -64,13 +82,16 @@ while ($t = sql_fetch($s)) {
 	$notes('','reset_all');
 	spip_timer('tw');
 	$tw = tw_propre($t['texte']);
-	$time_tw +=spip_timer('tw',true);
+	$time_tw = spip_timer('tw',true);
+	$time_total_tw += $time_tw;
 	
 	$notes('','reset_all');
 	spip_timer('propre');
 	$pr = propre($t['texte']);
-	$time_propre+=spip_timer('propre',true);
-
+	$time_propre = spip_timer('propre',true);
+	$time_total_propre += $time_propre ;
+	$ecart = round(100*$time_tw/$time_propre-100, 1);
+	save_stats($ecart, $t['id_article']);
 
 	if ($tw === $pr)
 		$success++;
@@ -105,6 +126,8 @@ while ($t = sql_fetch($s)) {
 }
 if ($erreur_open) { echo "</ul>"; }
 
+$stats = save_stats('', '', true);
+
 echo "
 <table class='spip stats'>
 	<caption>Statistiques Globales</caption>
@@ -114,17 +137,70 @@ echo "
 	 </tr>
 	<tr class='row_even'>
 		<td>Temps total Propre :</td>
-		<td>".round($time_propre)."&nbsp;ms</td>
+		<td>".round($time_total_propre)."&nbsp;ms</td>
 	</tr>
 	<tr class='row_odd'>
 		<td>Temps total TextWheel :</td>
-		<td>".round($time_tw)."&nbsp;ms</td>
+		<td>".round($time_total_tw)."&nbsp;ms</td>
 	 </tr>
 	<tr class='row_even'>
 		<td>Ecart :</td>
-		<td>".round(100*$time_tw/$time_propre-100,1)."%</td>
+		<td>".round(100*$time_total_tw/$time_total_propre-100,1)."%</td>
+	</tr>
+	<tr class='row_odd'>
+		<td>Ecart type :</td>
+		<td>".round(sd($stats),1)."%</td>
 	</tr>
 </table>";
+
+/* stats les plus, les moins */
+if (!_request('id_article')) {
+	
+	
+	echo "<table class='spip stats'>
+		<caption>Les plus rapides...</caption>
+		<thead>
+			<tr>
+				<th>Article</th>
+				<th>Ecart</th>
+			</tr>
+		</thead>
+		<tbody>
+		";
+	$elements = 5;
+	foreach ($stats as $art=>$ecart) {
+		if (!$elements--) break;
+		echo "<tr class='" . ($elements%2 == 1 ? 'row_odd' : 'row_even') . "'>
+			<td>Article $art <a href='$lien&id_article=$art'>(voir)</a></td>
+			<td>$ecart%</td>
+		</tr>";
+	}
+	echo "</tbody></table>";
+
+	reset($stats);
+	$stats = array_reverse($stats);
+	echo "<table class='spip stats'>
+		<caption>Les moins rapides...</caption>
+		<thead>
+			<tr>
+				<th>Article</th>
+				<th>Ecart</th>
+			</tr>
+		</thead>
+		<tbody>
+		";
+	$elements = 5;
+	foreach ($stats as $art=>$ecart) {
+		if (!$elements--) break;
+		echo "<tr class='" . ($elements%2 == 1 ? 'row_odd' : 'row_even') . "'>
+			<td>Article $art <a href='$lien&id_article=$art'>(voir)</a></td>
+			<td>$ecart%</td>
+		</tr>";
+	}
+	echo "</tbody></table>";
+
+	
+}
 
 TextWheelDebug::outputDebug();
 
