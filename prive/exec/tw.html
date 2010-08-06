@@ -56,6 +56,7 @@ function sd($array) {
 	return sqrt(array_sum(array_map("sd_square", $array, array_fill(0,count($array), (array_sum($array) / count($array)) ) ) ) / (count($array)-1) );
 }
 
+
 $notes = charger_fonction('notes', 'inc');
 include_spip('tw_texte');
 include_spip('inc/diff');
@@ -74,6 +75,7 @@ tw_propre($init);
 
 $erreurs = 10;
 $success = 0;
+$nombre_statistiques = 5;
 $time_propre = $time_tw = 0;
 $lien = parametre_url(self(), 'var_debug_wheel', _request('var_debug_wheel'));
 $erreur_open = false;
@@ -146,11 +148,15 @@ echo "
 	<tr class='row_even'>
 		<td>Ecart :</td>
 		<td>".round(100*$time_total_tw/$time_total_propre-100,1)."%</td>
-	</tr>
-	<tr class='row_odd'>
-		<td>Ecart type :</td>
-		<td>".round(sd($stats),1)."%</td>
-	</tr>
+	</tr>";
+	if (count($stats)>1) {
+		echo "
+			<tr class='row_odd'>
+				<td>Ecart type :</td>
+				<td>".round(sd($stats),1)."%</td>
+			</tr>";
+	}
+echo "
 </table>";
 
 /* stats les plus, les moins */
@@ -167,7 +173,7 @@ if (!_request('id_article')) {
 		</thead>
 		<tbody>
 		";
-	$elements = 5;
+	$elements = $nombre_statistiques;
 	foreach ($stats as $art=>$ecart) {
 		if (!$elements--) break;
 		echo "<tr class='" . ($elements%2 == 1 ? 'row_odd' : 'row_even') . "'>
@@ -178,7 +184,7 @@ if (!_request('id_article')) {
 	echo "</tbody></table>";
 
 	reset($stats);
-	$stats = array_reverse($stats);
+	$stats = array_reverse($stats, true);
 	echo "<table class='spip stats'>
 		<caption>Les moins rapides...</caption>
 		<thead>
@@ -189,7 +195,7 @@ if (!_request('id_article')) {
 		</thead>
 		<tbody>
 		";
-	$elements = 5;
+	$elements = $nombre_statistiques;
 	foreach ($stats as $art=>$ecart) {
 		if (!$elements--) break;
 		echo "<tr class='" . ($elements%2 == 1 ? 'row_odd' : 'row_even') . "'>
