@@ -31,7 +31,7 @@ function inc_notes($arg,$operation='traiter')
 	static $marqueur = 1;
 	global $les_notes, $compt_note, $notes_vues;
 
-	if ($GLOBALS['tw']) {
+	if (!$GLOBALS['tw']) {
 		require_once _DIR_RESTREINT.'inc/notes.php';
 		return inc_notes_dist($arg, $operation);
 	}
