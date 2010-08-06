@@ -22,6 +22,10 @@ function tw_traiter_raccourcis($letexte) {
 	// Appeler les fonctions de pre_traitement
 	#$letexte = pipeline('pre_propre', $letexte);
 
+	$debug = _request('var_debug_wheel');
+
+	if($debug) spip_timer('init');
+
 	if (!isset($wheel)) {
 		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
 		if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('intertitres')){
@@ -52,16 +56,28 @@ function tw_traiter_raccourcis($letexte) {
 		$wheel = new $GLOBALS['textWheel']($ruleset);
 	}
 
+	if($debug) $GLOBALS['totaux']['init'] += spip_timer('init', true);
+
 	// Gerer les notes (ne passe pas dans le pipeline)
+	if($debug) spip_timer('notes');
 	$notes = charger_fonction('notes', 'inc');
 	list($letexte, $mes_notes) = $notes($letexte);
+	if($debug) $GLOBALS['totaux']['notes'] += spip_timer('notes', true);
 
+	if($debug) spip_timer('text');
 	$letexte = $wheel->text($letexte);
+	if($debug) $GLOBALS['totaux']['text'] += spip_timer('text', true);
 
 	// Appeler les fonctions de post-traitement
+	if($debug) spip_timer('post_propre');
 	$letexte = pipeline('post_propre', $letexte);
+	if($debug) $GLOBALS['totaux']['post_propre'] += spip_timer('post_propre', true);
 
-	if ($mes_notes) $notes($mes_notes);
+	if($debug) spip_timer('mesnotes');
+	if ($mes_notes) {
+		$notes($mes_notes);
+	}
+	if($debug) $GLOBALS['totaux']['mesnotes'] += spip_timer('mesnotes', true);
 
 	return $letexte;
 }
@@ -122,7 +138,63 @@ function tw_interdire_scripts($arg) {
 	return $dejavu[$GLOBALS['filtrer_javascript']][$arg] = $t;
 }
 
+// http://doc.spip.org/@expanser_liens
+function expanser_liens_tw($texte, $connect='')
+{
+	$debug = _request('var_debug_wheel');
+
+	$texte = pipeline('pre_liens', $texte);
+	$sources = $inserts = $regs = array();
+
+	if($debug) spip_timer('liensmatch');
+	if (strpos($texte, '->') !== false
+	AND preg_match_all(_RACCOURCI_LIEN, $texte, $regs, PREG_SET_ORDER)) {
+		$lien = charger_fonction('lien', 'inc');
+		foreach ($regs as $k => $reg) {
+
+			$inserts[$k] = '@@SPIP_ECHAPPE_LIEN_' . $k . '@@';
+			$sources[$k] = $reg[0];
+			$texte = str_replace($sources[$k], $inserts[$k], $texte);
+
+			list($titre, $bulle, $hlang) = traiter_raccourci_lien_atts($reg[1]);
+			$r = $reg[count($reg)-1];
+			// la mise en lien automatique est passee par la a tort !
+			// corrigeons pour eviter d'avoir un <a...> dans un href...
+			if (strncmp($r,'<a',2)==0){
+				$href = extraire_attribut($r, 'href');
+				// remplacons dans la source qui peut etre reinjectee dans les arguments
+				// d'un modele
+				$sources[$k] = str_replace($r,$href,$sources[$k]);
+				// et prenons le href comme la vraie url a linker
+				$r = $href;
+			}
+			$regs[$k] = $lien($r, $titre, '', $bulle, $hlang, '', $connect);
+		}
+	}
+	if($debug) $GLOBALS['totaux']['liensmatch'] += spip_timer('liensmatch', true);
+
+
+	// on passe a traiter_modeles la liste des liens reperes pour lui permettre
+	// de remettre le texte d'origine dans les parametres du modele
+	if($debug) spip_timer('traiter_modeles');
+	$texte = traiter_modeles($texte, false, false, $connect, array($inserts, $sources));
+	if($debug) $GLOBALS['totaux']['traiter_modeles'] += spip_timer('traiter_modeles', true);
+
+	if($debug) spip_timer('corriger_typo');
+ 	$texte = corriger_typo($texte);
+	if($debug) $GLOBALS['totaux']['corriger_typo'] += spip_timer('corriger_typo', true);
+
+	if($debug) spip_timer('reinserts');
+	$texte = str_replace($inserts, $regs, $texte);
+	if($debug) $GLOBALS['totaux']['reinserts'] += spip_timer('reinserts', true);
+
+	return $texte;
+}
+
 function tw_propre($t, $connect=null) {
+
+	$GLOBALS['tw'] = true;
+
 	// les appels directs a cette fonction depuis le php de l'espace
 	// prive etant historiquement ecrits sans argment $connect
 	// on utilise la presence de celui-ci pour distinguer les cas
@@ -135,8 +207,28 @@ function tw_propre($t, $connect=null) {
 		$interdire_script = true;
 	}
 
-	return !$t ? strval($t) :
-		tw_echappe_retour_modeles(
-			tw_traiter_raccourcis(
-				expanser_liens(echappe_html($t),$connect)),$interdire_script);
+	if (!$t) return strval($t);
+
+	$debug = _request('var_debug_wheel');
+
+	if($debug) spip_timer('echappe_html');
+	$t = echappe_html($t);
+	if($debug) $GLOBALS['totaux']['echappe_html'] += spip_timer('echappe_html', true);
+
+	if($debug) spip_timer('expanser_liens');
+	$t = expanser_liens_tw($t,$connect);
+	if($debug) $GLOBALS['totaux']['expanser_liens'] += spip_timer('expanser_liens', true);
+
+	if($debug) spip_timer('tw_traiter_raccourcis');
+	$t = tw_traiter_raccourcis($t);
+	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis'] += spip_timer('tw_traiter_raccourcis', true);
+
+	if($debug) spip_timer('tw_echappe_retour_modeles');
+	$t = tw_echappe_retour_modeles($t, $interdire_script);
+	if($debug) $GLOBALS['totaux']['tw_echappe_retour_modeles'] += spip_timer('tw_echappe_retour_modeles', true);
+
+
+	$GLOBALS['tw'] = false;
+
+	return $t;
 }

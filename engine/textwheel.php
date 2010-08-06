@@ -515,6 +515,7 @@ class TextWheelDebug extends TextWheel {
 	static protected $t;
 	static protected $u;
 	static protected $w;
+	static $total;
 
 	/**
 	 * Timer for profiling
@@ -579,10 +580,27 @@ class TextWheelDebug extends TextWheel {
 		if (isset(TextWheelDebug::$t)) {
 			$time = array_flip(array_map('strval', TextWheelDebug::$t));
 			krsort($time);
+			echo "
+			<style>th, td { padding-left: 15px }</style>
+			<table>
+			<thead><tr><th>temps</th><th>rule</th><th>application</th></tr></thead>\n";
 			foreach($time as $t => $r) {
+				$applications = intval(TextWheelDebug::$u[$r]);
+				$total += $t;
 				if(intval($t))
-					echo "<li><b>$t</b> ".htmlspecialchars($r)." (".intval(TextWheelDebug::$u[$r])." modifs/".intval(TextWheelDebug::$w[$r]).")</li>";
+					echo "<tr><td style='text-align:right'><b>".round($t)."</b>&nbsp;ms</td><td> ".htmlspecialchars($r)."</td>
+					<td"
+					. (!$applications ? " style='color: orange'" : "")
+					.">".$applications."/".intval(TextWheelDebug::$w[$r])."</td></tr>";
 			}
+			echo "</table>\n";
+
+			echo "<p>temps totaux:</p>";
+			foreach ($GLOBALS['totaux'] as $cause => $duree)
+				echo "<li>$cause : ".intval($duree)." ms</li>\n";
+
+			# somme des temps des rules, ne tient pas compte des subwheels
+			echo "<p>temps total rules: ".round($total)."&nbsp;ms</p>\n";
 		}
 	}
 

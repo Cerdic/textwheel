@@ -25,12 +25,17 @@ if (_request('id_article'))
 	$w = " WHERE id_article=".intval(_request('id_article'));
 $s = spip_query('SELECT * FROM spip_articles'.$w.' LIMIT 0,1000');
 
+
+// faire les inits communes
+$init = 'oh la la';
+propre($init);
+tw_propre($init);
+
+
 $erreurs = 10;
 $success = 0;
 $time_propre = $time_tw = 0;
 while ($t = sql_fetch($s)) {
-	propre($t['texte']); // a blanc, pour faire les inits communes mais seulement si pas de memoization
-
 	$notes('','reset_all');
 	spip_timer('tw');
 	$tw = tw_propre($t['texte']);
@@ -68,10 +73,11 @@ while ($t = sql_fetch($s)) {
 }
 
 echo "$success articles compares avec succes";
-echo "<br />Temps total Propre : $time_propre";
-echo "<br />Temps total TextWheel : $time_tw";
+echo "<br />Temps total Propre : ".round($time_propre)."&nbsp;ms";
+echo "<br />Temps total TextWheel : ".round($time_tw)."&nbsp;ms";
 echo "<br />Ecart : ".round(100*$time_tw/$time_propre-100,1)."%";
 
 TextWheelDebug::outputDebug();
+
 
 ?>
