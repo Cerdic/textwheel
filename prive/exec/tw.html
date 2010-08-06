@@ -29,6 +29,10 @@ $(document).ready(function(){
 	})]
 	<span class='sep'>|</span>
 	<a href="[(#SELF|parametre_url{var_debug_wheel,[(#ENV{var_debug_wheel}|?{1,''})]})]">Actualiser</a>
+	[(#ENV{id_article}|oui)
+		<span class='sep'>|</span>
+		<a href="[(#SELF|parametre_url{var_debug_wheel,[(#ENV{var_debug_wheel}|?{1,''})]}|parametre_url{id_article,''})]">Retour</a>
+	]
 </p>
 
 <?php
