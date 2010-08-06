@@ -72,33 +72,34 @@ $s = spip_query('SELECT * FROM spip_articles'.$w.' LIMIT 0,1000');
 
 // faire les inits communes
 $init = 'oh la la';
-	#// ne pas les prendre dans le debug
-	#$debug = _request('var_debug_wheel');
-	#set_request('var_debug_wheel','');
 propre($init);
 tw_propre($init);
-	#set_request('var_debug_wheel', $debug);
 
 
 $erreurs = 10;
 $success = 0;
 $nombre_statistiques = 5;
-$time_total_propre = $time_total_propre = 0;
-$lien = parametre_url(self(), 'var_debug_wheel', _request('var_debug_wheel'));
+$time_total_propre = $time_total_tw = 0;
+$debug = _request('var_debug_wheel');
+$lien = parametre_url(self(), 'var_debug_wheel', $debug);
 $erreur_open = false;
 
 while ($t = sql_fetch($s)) {
+	
+	# tw_propre
 	$notes('','reset_all');
 	spip_timer('tw');
 	$tw = tw_propre($t['texte']);
 	$time_tw = spip_timer('tw',true);
 	$time_total_tw += $time_tw;
-	
+
+	# propre
 	$notes('','reset_all');
 	spip_timer('propre');
 	$pr = propre($t['texte']);
 	$time_propre = spip_timer('propre',true);
 	$time_total_propre += $time_propre ;
+	
 	$ecart = round(100*$time_tw/$time_propre-100, 1);
 	save_stats($ecart, $t['id_article']);
 
@@ -144,7 +145,7 @@ echo "
 	<tr class='row_odd'>
 		<td>Articles compares avec succes :</td>
 		<td>$success</td>
-	 </tr>
+	</tr>
 	<tr class='row_even'>
 		<td>Temps total Propre :</td>
 		<td>".round($time_total_propre)."&nbsp;ms</td>
@@ -152,7 +153,7 @@ echo "
 	<tr class='row_odd'>
 		<td>Temps total TextWheel :</td>
 		<td>".round($time_total_tw)."&nbsp;ms</td>
-	 </tr>
+	</tr>
 	<tr class='row_even'>
 		<td>Ecart :</td>
 		<td>".round(100*$time_total_tw/$time_total_propre-100,1)."%</td>
