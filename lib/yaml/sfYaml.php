@@ -68,14 +68,22 @@ class sfYaml
   {
     $file = '';
 
-    // if input is a file, process it
+    // if input is a file, load it
     if (strpos($input, "\n") === false && is_file($input))
     {
       $file = $input;
 
-      ob_start();
-      $retval = include($input);
-      $content = ob_get_clean();
+      $content = $yaml = file_get_contents($input);
+
+      // if the file contains valid PHP, process it
+      if (strpos($content, '<'.'?') !== false) {
+        ob_start();
+        $retval = eval('?'.'>'.$yaml);
+        $content = ob_get_clean();
+        // syntax error?
+        if ($retval === FALSE)
+          $content = $yaml;
+      }
 
       // if an array is returned by the config file assume it's in plain php form else in YAML
       $input = is_array($retval) ? $retval : $content;

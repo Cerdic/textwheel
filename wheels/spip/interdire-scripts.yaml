@@ -2,32 +2,30 @@
     #
     # Si on nomme une regle, elle devient surchargeable
 
-echapper-asp:
-  if_chars: "<"
+securite-asp:
   type: str
   match: "<%"
   replace: "&lt;%"
 
-echapper-php:
-  if_chars: "<"
-  type: preg
-  match: "/<[?]/"
+securite-php:
+  type: str
+  match: "<?"
   replace: "&lt;?"
 
-echapper-script-php:
-  if_chars: "<"
+securite-script-php:
+  if_str: "<script"
   type: preg
   match: "/<(script\b[^>]+\blanguage\b[^\w>]+php\b)/UimsS"
   replace: "&lt;\1"
 
-echappe-js:
+securite-js:
   if_str: "<script"
   type: all
   replace: "tw_echappe_js"
   is_callback: Y
 
-supprimer-base:
-  if_chars: "<"
+securite-base:
+  if_str: "<base"
   type: preg
-  match: "/<(base\b)/iS"
-  replace: "&lt;\1"
+  match: "/<base\b/iS"
+  replace: "&lt;base"
