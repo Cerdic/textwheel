@@ -10,7 +10,8 @@ table.spip.stats {margin:1em 0;}
 table.spip.stats tr:hover {background:white;}
 table.spip.stats {border:1px solid #888; width:80%;}
 table.spip.stats th, table.spip.stats td{border:0;}
-
+.tw_erreur {margin:1em 0; padding:.5em; background:#fff; border:1px solid #ff7f00;}
+.tw_erreur li {margin-left:1em;}
 </style>
 <script type='text/javascript'>
 $(document).ready(function(){
@@ -56,6 +57,9 @@ tw_propre($init);
 $erreurs = 10;
 $success = 0;
 $time_propre = $time_tw = 0;
+$lien = parametre_url(self(), 'var_debug_wheel', _request('var_debug_wheel'));
+$erreur_open = false;
+
 while ($t = sql_fetch($s)) {
 	$notes('','reset_all');
 	spip_timer('tw');
@@ -72,11 +76,18 @@ while ($t = sql_fetch($s)) {
 		$success++;
 		//echo "<li>article $t[id_article] OK</li>\n";
 	else {
+		if (!$erreur_open) {
+			$erreur_open = true;
+			echo "<ul class='tw_erreur'>";
+		}
 		echo "<li>article $t[id_article] <b>NOK</b>";
 		if (_request('id_article') != $t['id_article'])
-			echo " <a href='?exec=tw&amp;id_article=$t[id_article]'>afficher</a>";
+			echo " <a href='$lien&amp;id_article=$t[id_article]'>afficher</a>";
 		echo "</li>\n";
-		if (!$erreurs--) break;
+		if (!$erreurs--) {
+			echo "</ul>";
+			break;
+		}
 	}
 
 	if (_request('id_article')) {
@@ -92,6 +103,7 @@ while ($t = sql_fetch($s)) {
 	}
 
 }
+if ($erreur_open) { echo "</ul>"; }
 
 echo "
 <table class='spip stats'>
