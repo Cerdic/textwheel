@@ -5,16 +5,33 @@
   Distribue sous licence GPL
 
 ]
-<?php
+<style type='text/css'>
+table.spip.stats {margin:1em 0;}
+table.spip.stats tr:hover {background:white;}
+table.spip.stats {border:1px solid #888; width:80%;}
+table.spip.stats th, table.spip.stats td{border:0;}
 
-echo "<h1>TextWheel</h1>";
-echo "<p>";
-if (_request('var_debug_wheel')) {
-	echo "<a href='" . parametre_url(self(), 'var_debug_wheel', ''). "'>Enlever le mode debug</a>";
-} else {
-	echo "<a href='" . parametre_url(self(), 'var_debug_wheel', '1'). "'>Activer le mode debug</a>";
-}
-echo " | <a href='" . self() . "'>Actualiser</a></p>";
+</style>
+<script type='text/javascript'>
+$(document).ready(function(){
+	$('.textwheeldebug table')
+		.addClass('spip stats')
+		.find('tbody tr').addClass('row_odd')
+		.parent().find('tr:nth-child(2n+1)').addClass('row_even');
+});
+</script>
+
+<h1>TextWheel</h1>
+<p class='actions'>
+	[(#ENV{var_debug_wheel}|?{
+		<a href="[(#SELF|parametre_url{var_debug_wheel,''})]">Enlever le mode debug</a>,
+		<a href="[(#SELF|parametre_url{var_debug_wheel,1})]">Activer le mode debug</a>
+	})]
+	<span class='sep'>|</span>
+	<a href="[(#SELF|parametre_url{var_debug_wheel,[(#ENV{var_debug_wheel}|?{1,''})]})]">Actualiser</a>
+</p>
+
+<?php
 
 $notes = charger_fonction('notes', 'inc');
 include_spip('tw_texte');
@@ -72,10 +89,26 @@ while ($t = sql_fetch($s)) {
 
 }
 
-echo "$success articles compares avec succes";
-echo "<br />Temps total Propre : ".round($time_propre)."&nbsp;ms";
-echo "<br />Temps total TextWheel : ".round($time_tw)."&nbsp;ms";
-echo "<br />Ecart : ".round(100*$time_tw/$time_propre-100,1)."%";
+echo "
+<table class='spip stats'>
+	<caption>Statistiques Globales</caption>
+	<tr class='row_odd'>
+		<td>Articles compares avec succes :</td>
+		<td>$success</td>
+	 </tr>
+	<tr class='row_even'>
+		<td>Temps total Propre :</td>
+		<td>".round($time_propre)."&nbsp;ms</td>
+	</tr>
+	<tr class='row_odd'>
+		<td>Temps total TextWheel :</td>
+		<td>".round($time_tw)."&nbsp;ms</td>
+	 </tr>
+	<tr class='row_even'>
+		<td>Ecart :</td>
+		<td>".round(100*$time_tw/$time_propre-100,1)."%</td>
+	</tr>
+</table>";
 
 TextWheelDebug::outputDebug();
 
