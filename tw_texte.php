@@ -138,23 +138,18 @@ function tw_interdire_scripts($arg) {
 	return $dejavu[$GLOBALS['filtrer_javascript']][$arg] = $t;
 }
 
-// http://doc.spip.org/@expanser_liens
-function expanser_liens_tw($texte, $connect='')
-{
-	$debug = _request('var_debug_wheel');
 
-	$texte = pipeline('pre_liens', $texte);
-	$sources = $inserts = $regs = array();
+function tw_expanser_un_lien($reg, $quoi='lien'){
+	static $inserts;
+	static $sources;
+	static $regs;
+	static $k = 0;
+	static $lien;
 
-	if($debug) spip_timer('liensmatch');
-	if (strpos($texte, '->') !== false
-	AND preg_match_all(_RACCOURCI_LIEN, $texte, $regs, PREG_SET_ORDER)) {
-		$lien = charger_fonction('lien', 'inc');
-		foreach ($regs as $k => $reg) {
-
+	switch ($quoi){
+		case 'lien':
 			$inserts[$k] = '@@SPIP_ECHAPPE_LIEN_' . $k . '@@';
 			$sources[$k] = $reg[0];
-			$texte = str_replace($sources[$k], $inserts[$k], $texte);
 
 			list($titre, $bulle, $hlang) = traiter_raccourci_lien_atts($reg[1]);
 			$r = $reg[count($reg)-1];
@@ -169,15 +164,48 @@ function expanser_liens_tw($texte, $connect='')
 				$r = $href;
 			}
 			$regs[$k] = $lien($r, $titre, '', $bulle, $hlang, '', $connect);
-		}
+			return $inserts[$k++];
+			break;
+		case 'init':
+			if (!$lien)
+				$lien = charger_fonction('lien', 'inc');
+			$inserts = array();
+			$sources = array();
+			$regs = array();
+			$k=0;
+			return;
+			break;
+		case 'reinsert':
+			if (!count($inserts)) return $reg;
+			return str_replace($inserts, $regs, $reg);
+			break;
+		case 'sources':
+			return array($inserts, $sources);
+			break;
 	}
-	if($debug) $GLOBALS['totaux']['expanser_liens:']['liensmatch'] += spip_timer('liensmatch', true);
+}
 
+// http://doc.spip.org/@expanser_liens
+function expanser_liens_tw($texte, $connect='')
+{
+	$debug = _request('var_debug_wheel');
+
+	$texte = pipeline('pre_liens', $texte);
+
+	tw_expanser_un_lien('','init');
+
+	if($debug) spip_timer('liensmatch');
+
+	if (strpos($texte, '->') !== false)
+		$texte = preg_replace_callback (_RACCOURCI_LIEN, 'tw_expanser_un_lien',$texte);
+
+	if($debug) $GLOBALS['totaux']['expanser_liens:']['liensmatch'] += spip_timer('liensmatch', true);
 
 	// on passe a traiter_modeles la liste des liens reperes pour lui permettre
 	// de remettre le texte d'origine dans les parametres du modele
 	if($debug) spip_timer('traiter_modeles');
-	$texte = traiter_modeles($texte, false, false, $connect, array($inserts, $sources));
+	if (strpos($texte,'<')!==false)
+		$texte = traiter_modeles($texte, false, false, $connect, tw_expanser_un_lien('','sources'));
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['traiter_modeles'] += spip_timer('traiter_modeles', true);
 
 	if($debug) spip_timer('corriger_typo');
@@ -185,7 +213,7 @@ function expanser_liens_tw($texte, $connect='')
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo'] += spip_timer('corriger_typo', true);
 
 	if($debug) spip_timer('reinserts');
-	$texte = str_replace($inserts, $regs, $texte);
+	$texte = tw_expanser_un_lien($texte,'reinsert');
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['reinserts'] += spip_timer('reinserts', true);
 
 	return $texte;
