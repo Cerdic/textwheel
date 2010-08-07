@@ -192,9 +192,9 @@ function expanser_liens_tw($texte, $connect='')
 
 	$texte = pipeline('pre_liens', $texte);
 
-	tw_expanser_un_lien('','init');
 
 	if($debug) spip_timer('liensmatch');
+	tw_expanser_un_lien('','init');
 
 	if (strpos($texte, '->') !== false)
 		$texte = preg_replace_callback (_RACCOURCI_LIEN, 'tw_expanser_un_lien',$texte);
