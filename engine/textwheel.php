@@ -512,9 +512,11 @@ class TextWheel {
 }
 
 class TextWheelDebug extends TextWheel {
-	static protected $t;
-	static protected $u;
-	static protected $w;
+	static protected $t; #tableaux des temps
+	static protected $tu; #tableaux des temps (rules utilises)
+	static protected $tnu; #tableaux des temps (rules non utilises)
+	static protected $u; #compteur des rules utiles
+	static protected $w; #compteur des rules appliques
 	static $total;
 
 	/**
@@ -565,8 +567,15 @@ class TextWheelDebug extends TextWheel {
 			$b = $t;
 			$this->apply($rule, $t);
 			TextWheelDebug::$w[$name] ++; # nombre de fois appliquee
-			if ($t !== $b) TextWheelDebug::$u[$name] ++; # nombre de fois utile
-			TextWheelDebug::$t[$name] += $this->timer($name, true); # timer
+			$v = $this->timer($name, true); # timer
+			TextWheelDebug::$t[$name] += $v;
+			if ($t !== $b) {
+				TextWheelDebug::$u[$name] ++; # nombre de fois utile
+				TextWheelDebug::$tu[$name] += $v;
+			} else {
+				TextWheelDebug::$tnu[$name] += $v;
+			}
+			
 		}
 		#foreach ($this->rules as &$rule) #smarter &reference, but php5 only
 		#	$this->apply($rule, $t);
@@ -591,18 +600,23 @@ class TextWheelDebug extends TextWheel {
 				.textwheeldebug .prof-2 .name { padding-left: 60px }
 				.textwheeldebug .zero { color:orange; }
 				.textwheeldebug .number { text-align:right; }
+				.textwheeldebug .strong { font-weight:bold; }
 			</style>
-			<table>
+			<table class='sortable'>
 			<caption>Temps par rule</caption>
-			<thead><tr><th>temps</th><th>rule</th><th>application</th></tr></thead>\n";
+			<thead><tr><th>temps&nbsp;(ms)</th><th>rule</th><th>application</th><th>t/u&nbsp;(ms)</th><th>t/n-u&nbsp;(ms)</th></tr></thead>\n";
 			foreach($time as $t => $r) {
 				$applications = intval(TextWheelDebug::$u[$r]);
 				$total += $t;
-				if(intval($t))
-					echo "<tr><td class='number'><b>".round($t)."</b>&nbsp;ms</td><td> ".htmlspecialchars($r)."</td>
+				if(intval($t*10))
+					echo "<tr>
+					<td class='number strong'>".number_format(round($t*10)/10,1)."</td><td> ".htmlspecialchars($r)."</td>
 					<td"
 					. (!$applications ? " class='zero'" : "")
-					.">".$applications."/".intval(TextWheelDebug::$w[$r])."</td></tr>";
+					.">".$applications."/".intval(TextWheelDebug::$w[$r])."</td>
+					<td class='number'>".($applications?number_format(round(TextWheelDebug::$tu[$r]/$applications*100)/100,2):"") ."</td>
+					<td class='number'>".(($nu = intval(TextWheelDebug::$w[$r])-$applications)?number_format(round(TextWheelDebug::$tnu[$r]/$nu*100)/100,2):"") ."</td>
+					</tr>";
 			}
 			echo "</table>\n";
 
