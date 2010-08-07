@@ -26,30 +26,46 @@ function typographie_fr($letexte) {
 
 	static $trans;
 
-	// Nettoyer 160 = nbsp ; 187 = raquo ; 171 = laquo ; 176 = deg ;
-	// 147 = ldquo; 148 = rdquo; ' = zouli apostrophe
-	if (!$trans) {
-		$trans = array(
-			"'" => "&#8217;",
-			"&nbsp;" => "~",
-			"&raquo;" => "&#187;",
-			"&laquo;" => "&#171;",
-			"&rdquo;" => "&#8221;",
-			"&ldquo;" => "&#8220;",
-			"&deg;" => "&#176;"
-		);
-		$chars = array(160 => '~', 187 => '&#187;', 171 => '&#171;', 148 => '&#8221;', 147 => '&#8220;', 176 => '&#176;');
-		$chars_trans = array_keys($chars);
-		$chars = array_values($chars);
-		$chars_trans = implode(' ',array_map('chr',$chars_trans));
-		$chars_trans = unicode2charset(charset2unicode($chars_trans, 'iso-8859-1', 'forcer'));
-		$chars_trans = explode(" ",$chars_trans);
-		foreach($chars as $k=>$r)
-			$trans[$chars_trans[$k]] = $r;
+	if (!isset($trans)) {
+		switch ($GLOBALS['meta']['charset'] == 'utf-8') {
+			case 'utf-8':
+				$trans = array(
+				"\x26\x6e\x62\x73\x70\x3b" => '~',
+				"\x26\x72\x61\x71\x75\x6f\x3b" => '&#187;',
+				"\x26\x6c\x61\x71\x75\x6f\x3b" => '&#171;',
+				"\x26\x72\x64\x71\x75\x6f\x3b" => '&#8221;',
+				"\x26\x6c\x64\x71\x75\x6f\x3b" => '&#8220;',
+				"\x26\x64\x65\x67\x3b" => '&#176;',
+				"\xc2\xa0" => '~',
+				"\xc2\xbb" => '&#187;',
+				"\xc2\xab" => '&#171;',
+				"\xe2\x80\x9d" => '&#8221;',
+				"\xe2\x80\x9c" => '&#8220;',
+				"\xc2\xb0" => '&#176;'
+				);
+				break;
+			case 'iso-8859-1':
+				$trans = array(
+				"\x26\x6e\x62\x73\x70\x3b" => '~',
+				"\x26\x72\x61\x71\x75\x6f\x3b" => '&#187;',
+				"\x26\x6c\x61\x71\x75\x6f\x3b" => '&#171;',
+				"\x26\x72\x64\x71\x75\x6f\x3b" => '&#8221;',
+				"\x26\x6c\x64\x71\x75\x6f\x3b" => '&#8220;',
+				"\x26\x64\x65\x67\x3b" => '&#176;',
+				"\x20" => '~',
+				"\xbb" => '&#187;',
+				"\xab" => '&#171;',
+				"\xb0" => '&#176;'
+				);
+				break;
+			default:
+				$trans = array();
+		}
+		$trans["'"] = '&#8217;'; # joulie apostrophe
 	}
 
 	if($debug) spip_timer('trans');
-	$letexte = strtr($letexte, $trans);
+	$letexte = str_replace(array_keys($trans), array_values($trans), $letexte);
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['trans'] += spip_timer('trans', true);
 
 	if($debug) spip_timer('cherche1');
