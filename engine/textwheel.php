@@ -579,9 +579,8 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function replace_split_cb(&$match,&$replace,&$t,&$count){
-		#list($match,$glue) = $match;
-		$a = explode(reset($match), $t);
-		$t = join(end($match), array_map($replace,$a));
+		$a = explode($match[0], $t);
+		$t = join($match[1], array_map($replace,$a));
 	}
 }
 
