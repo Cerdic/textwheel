@@ -79,7 +79,9 @@ include_spip('inc/revisions');
 
 if (_request('id_article'))
 	$w = " WHERE id_article=".intval(_request('id_article'));
-$s = spip_query('SELECT * FROM spip_articles '.$w.' ORDER BY id_article LIMIT '.intval(_request('debut_a')).',#GET{pagination}');
+else
+	$w = ' LIMIT '.intval(_request('debut_a')).',#GET{pagination}';
+$s = spip_query('SELECT * FROM spip_articles '.$w);
 
 
 // faire les inits communes
