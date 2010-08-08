@@ -146,7 +146,7 @@ intro:
 
 br-restant:
   # eliminer les br restant en debut de texte
-  match: '@^\n<br />@S'
+  match: "@^\n<br />@S"
   replace: ''
   if_str: "\n<br"
   priority: -20 # avant !paragraphes
