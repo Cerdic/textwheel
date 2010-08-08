@@ -64,6 +64,10 @@ function typographie_fr($letexte) {
 		$trans["'"] = '&#8217;'; # joulie apostrophe
 	}
 
+	# cette chaine ne peut pas exister,
+	# cf. TYPO_PROTECTEUR dans inc/texte
+	$pro = "-\x2-";
+
 	if($debug) spip_timer('trans');
 	$letexte = str_replace(array_keys($trans), array_values($trans), $letexte);
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['trans'] += spip_timer('trans', true);
@@ -79,10 +83,10 @@ function typographie_fr($letexte) {
 	$letexte = preg_replace('/&#187;| --?,|(?::| %)(?:\W|$)/S', '~\0', $letexte);
 
 	/* 3 */
-	$letexte = preg_replace('/[!?][!?\.]*/S', "\x2\x2~\\0", $letexte, -1, $c);
+	$letexte = preg_replace('/[!?][!?\.]*/S', "$pro~\\0", $letexte, -1, $c);
 	if ($c) {
-		$letexte = preg_replace("/([\[<\(!\?\.])\x2\x2~/S", '\1', $letexte);
-		$letexte = str_replace("\x2\x2", '', $letexte);
+		$letexte = preg_replace("/([\[<\(!\?\.])$pro~/S", '\1', $letexte);
+		$letexte = str_replace("$pro", '', $letexte);
 	}
 
 	/* 4 */
@@ -97,10 +101,10 @@ function typographie_fr($letexte) {
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['chercheespaces'] += spip_timer('chercheespaces', true);
 
 	if($debug) spip_timer('cherche2');
-	$letexte = preg_replace("/--([^-]|$)/S", "\x2\x2&mdash;\\1", $letexte, -1, $c);
+	$letexte = preg_replace("/--([^-]|$)/S", "$pro&mdash;\\1", $letexte, -1, $c);
 	if ($c) {
-		$letexte = preg_replace("/([-\n])\x2\x2&mdash;/S", "\\1--", $letexte);
-		$letexte = str_replace("\x2\x2", '', $letexte);
+		$letexte = preg_replace("/([-\n])$pro&mdash;/S", "\\1--", $letexte);
+		$letexte = str_replace($pro, '', $letexte);
 	}
 
 	$letexte = preg_replace(',(https?|ftp|mailto)~((://[^"\'\s\[\]\}\)<>]+)~([?]))?,S', '\1\3\4', $letexte);
