@@ -55,6 +55,7 @@ class TextWheelRule {
 	var $is_callback=false; # $replace is a callback function
 	var $is_wheel; # flag to create a sub-wheel from rules given as replace
 	var $pick_match = 0; # item to pick for sub-wheel replace
+	var $glue = null; # glue for implode ending split rule
 
 	# optional
 	# language specific
@@ -63,14 +64,33 @@ class TextWheelRule {
 
 	# optimizations
 	var $func_replace;
-	
+
+	/**
+	 * Rule constructor
+	 * @param <type> $args
+	 * @return <type>
+	 */
 	public function TextWheelRule($args) {
 		if (!is_array($args))
 			return;
 		foreach($args as $k=>$v)
 			if (property_exists($this, $k))
 				$this->$k = $args[$k];
+		$this->checkValidity(); // check that the rule is valid
 	}
+
+	/**
+	 * Rule checker
+	 */
+	protected function checkValidity(){
+		if ($this->type=='split'){
+			if (is_array($this->match))
+				throw new InvalidArgumentException('match argument for split rule can\'t be an array');
+			if (isset($this->glue) AND is_array($this->glue))
+				throw new InvalidArgumentException('glue argument for split rule can\'t be an array');
+		}
+	}
+
 }
 
 abstract class TextWheelDataSet {
@@ -322,7 +342,7 @@ class TextWheel {
 	protected function &createSubWheel(&$rules){
 		return new TextWheel($rules);
 	}
-	
+
 	/**
 	 * Initializing a rule a first call
 	 * including file, creating function or wheel
@@ -331,7 +351,6 @@ class TextWheel {
 	 * @param TextWheelRule $rule
 	 */
 	protected function initRule(&$rule){
-
 		# language specific
 		if ($rule->require)
 			require_once $rule->require;
@@ -389,6 +408,7 @@ class TextWheel {
 					break;
 				case 'split':
 					$rule->func_replace = 'replace_split';
+					$rule->match = array($rule->match,  is_null($rule->glue)?$rule->match:$rule->glue);
 					break;
 				case 'preg':
 				default:
@@ -539,18 +559,29 @@ class TextWheel {
 		$t = preg_replace_callback($match, $replace, $t, -1, $count);
 	}
 
+
 	/**
-	 * Callback split replacement
+	 * Static split replacement : invalid
 	 * @param mixed $match
 	 * @param mixed $replace
 	 * @param string $t
 	 * @param int $count
 	 */
+	protected static function replace_split(&$match,&$replace,&$t,&$count){
+		throw new InvalidArgumentException('split rule allways needs a callback function as replace');
+	}
+
+	/**
+	 * Callback split replacement
+	 * @param array $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
 	protected static function replace_split_cb(&$match,&$replace,&$t,&$count){
-		$a = explode($match, $t);
-		foreach ($a as $i=>$b)
-			$a[$i] = $replace($b);
-		$t = join($match, $a);
+		#list($match,$glue) = $match;
+		$a = explode(reset($match), $t);
+		$t = join(end($match), array_map($replace,$a));
 	}
 }
 
