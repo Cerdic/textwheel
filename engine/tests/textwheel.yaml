@@ -334,3 +334,32 @@ replace_default:
       match: "/te([xs])t(e?)/"
       replace: "tet\2\1"
   output: "Un tetex de tets en entree"
+
+split_cb:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "n"
+      type: split
+      is_wheel: Y
+      replace:
+        -
+          type: all
+          replace: '!\0!'
+  output: "!U!n! texte de test e!n! e!n!tree!"
+
+split_cb_glue:
+  input: "Un texte de test en entree"
+  ruleset:
+    -
+      match: "n"
+      type: split
+      is_wheel: Y
+      replace:
+        -
+          type: all
+          replace: trim
+          is_callback: Y
+      glue: "XX"
+  output: "UXXtexte de test eXXeXXtree"
+
