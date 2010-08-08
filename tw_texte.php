@@ -147,6 +147,15 @@ function tw_expanser_un_lien($reg, $quoi='lien'){
 	static $lien;
 
 	switch ($quoi){
+		case 'init':
+			if (!$lien)
+				$lien = charger_fonction('lien', 'inc');
+			$inserts = array();
+			$sources = array();
+			$regs = array();
+			$k=0;
+			return;
+			break;
 		case 'lien':
 			$inserts[$k] = '@@SPIP_ECHAPPE_LIEN_' . $k . '@@';
 			$sources[$k] = $reg[0];
@@ -165,15 +174,6 @@ function tw_expanser_un_lien($reg, $quoi='lien'){
 			}
 			$regs[$k] = $lien($r, $titre, '', $bulle, $hlang, '', $connect);
 			return $inserts[$k++];
-			break;
-		case 'init':
-			if (!$lien)
-				$lien = charger_fonction('lien', 'inc');
-			$inserts = array();
-			$sources = array();
-			$regs = array();
-			$k=0;
-			return;
 			break;
 		case 'reinsert':
 			if (!count($inserts)) return $reg;

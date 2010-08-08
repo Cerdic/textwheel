@@ -42,7 +42,7 @@ class TextWheelRule {
 
 	## rule effectors, matching
 	# mandatory
-	var $type; # 'preg' (default), 'str', 'all'...
+	var $type; # 'preg' (default), 'str', 'all', 'split'...
 	var $match; # matching string or expression
 	# optional
 	# var $limit; # limit number of applications (unused)
@@ -327,7 +327,7 @@ class TextWheel {
 			$n = count(TextWheel::$subwheel);
 			TextWheel::$subwheel[] = $this->createSubWheel($rule->replace);
 			$var = '$m['.intval($rule->pick_match).']';
-			if ($rule->type=='all' OR $rule->type=='str')
+			if ($rule->type=='all' OR $rule->type=='str' OR $rule->type=='split' OR !isset($rule->match))
 				$var = '$m';
 			$code = 'return TextWheel::getSubWheel('.$n.')->text('.$var.');';
 			$rule->replace = create_function('$m', $code);
@@ -360,6 +360,9 @@ class TextWheel {
 						$rule->replace = implode('',$rule->replace);
 						$rule->func_replace = 'replace_strtr';
 					}
+					break;
+				case 'split':
+					$rule->func_replace = 'replace_split';
 					break;
 				case 'preg':
 				default:
@@ -508,6 +511,24 @@ class TextWheel {
 	 */
 	protected static function replace_preg_cb(&$match,&$replace,&$t,&$count){
 		$t = preg_replace_callback($match, $replace, $t, -1, $count);
+	}
+
+	/**
+	 * Callback split replacement
+	 * @param mixed $match
+	 * @param mixed $replace
+	 * @param string $t
+	 * @param int $count
+	 */
+	protected static function replace_split_cb(&$match,&$replace,&$t,&$count){
+		$a = explode($match, $t);#, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$c = count($a);
+		for ($i=0; $i<$c; $i++) {
+#			if ($i%2 == 0) {
+				$a[$i] = $replace($a[$i]);
+#			}
+		}
+		$t = join($match, $a);
 	}
 }
 

@@ -8,23 +8,27 @@
   is_wheel: Y
   replace:
 
+    listes-prepare-para:
+      match: ",\n[ \t]+\n,S"
+      replace: "\n\n"
+
     listes-decoupe-para:
-      match: ",(.*)(\z|\n[[:space:]]*\n),UmsS"
+      match: "\n\n"
+      type: split
       is_wheel: Y
-      pick_match: 1
       replace:
     
-        liste-prepend:
-          type: all
-          replace: "\n\0"
-    
-        liste-traite-para:
-          if_str: "\n-"
-          if_match: "/\n-[*#]/S"
+        liste-check:
+          if_str: "-"
+          if_match: "/-[*#]/S"
           is_wheel: Y
           type: all
           replace:
+            liste-prepend:
+              type: all
+              replace: "\n\0"
             liste-p-init:
+              if_match: "/\n-[*#]/S"
               type: all
               replace: tw_liste_init
               is_callback: Y
@@ -44,11 +48,3 @@
               type: all
               replace: tw_liste_close
               is_callback: Y
-    
-        liste-fin-para:
-          type: all
-          replace: "\0\n\n"
-    
-    listes-trim-fin:
-      match: ",\n\n\z,S"
-      replace: ""
