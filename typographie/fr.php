@@ -22,7 +22,7 @@ function typographie_fr($letexte) {
 		return typographie_fr_dist($letexte);
 	}
 
-	$debug = _request('var_debug_wheel');
+	#$debug = _request('var_debug_wheel');
 
 	static $trans;
 
@@ -75,35 +75,38 @@ function typographie_fr($letexte) {
 		$letexte = preg_replace(',(&#?[0-9a-z]+)~;,iS', '\1;', $letexte);
 	}
 
-	$cherche1 = array(
-		/* 2 */		'/&#187;| --?,|(?::| %)(?:\W|$)/S',
-		/* 3 */		'/([^[<(])([!?][!?\.]*)/S',
-		/* 4 */		'/&#171;|(?:M(?:M?\.|mes?|r\.?)|[MnN]&#176;) /S'
-	);
-	$remplace1 = array(
-		/* 2 */		'~\0',
-		/* 3 */		'\1~\2',
-		/* 4 */		'\0~'
-	);
-	$letexte = preg_replace($cherche1, $remplace1, $letexte);
+	/* 2 */
+	$letexte = preg_replace('/&#187;| --?,|(?::| %)(?:\W|$)/S', '~\0', $letexte);
+
+	/* 3 */
+	$letexte = preg_replace('/[!?][!?\.]*/S', "\x2\x2~\\0", $letexte, -1, $c);
+	if ($c) {
+		$letexte = preg_replace("/([\[<\(!\?\.])\x2\x2~/S", '\1', $letexte);
+		$letexte = str_replace("\x2\x2", '', $letexte);
+	}
+
+	/* 4 */
+	$letexte = preg_replace('/&#171;|M(?:M?\.|mes?|r\.?|&#176;) |[nN]&#176; /S', '\0~', $letexte);
+
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche1'] += spip_timer('cherche1', true);
+
+
 	if($debug) spip_timer('chercheespaces');
 	if (strpos($letexte, '~') !== false)
 		$letexte = preg_replace("/ *~+ */S", "~", $letexte);
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['chercheespaces'] += spip_timer('chercheespaces', true);
 
 	if($debug) spip_timer('cherche2');
-	$cherche2 = array(
-		'/([^-\n]|^)--([^-]|$)/S',
-		',(http|https|ftp|mailto)~((://[^"\'\s\[\]\}\)<>]+)~([?]))?,S',
-		'/~/'
-	);
-	$remplace2 = array(
-		'\1&mdash;\2',
-		'\1\3\4',
-		'&nbsp;'
-	);
-	$letexte = preg_replace($cherche2, $remplace2, $letexte);
+	$letexte = preg_replace("/--([^-]|$)/S", "\x2\x2&mdash;\\1", $letexte, -1, $c);
+	if ($c) {
+		$letexte = preg_replace("/([-\n])\x2\x2&mdash;/S", "\\1--", $letexte);
+		$letexte = str_replace("\x2\x2", '', $letexte);
+	}
+
+	$letexte = preg_replace(',(https?|ftp|mailto)~((://[^"\'\s\[\]\}\)<>]+)~([?]))?,S', '\1\3\4', $letexte);
+	$letexte = str_replace('~', '&nbsp;', $letexte);
+
+
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche2'] += spip_timer('cherche2', true);
 
 	return $letexte;

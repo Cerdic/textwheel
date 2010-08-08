@@ -185,6 +185,9 @@ function tw_expanser_un_lien($reg, $quoi='lien'){
 	}
 }
 
+
+define('_RACCOURCI_LIEN_TW', "/\[([^][]*?([[]\w*[]][^][]*)*)->(>?)([^]]*)\]/msS");
+
 // http://doc.spip.org/@expanser_liens
 function expanser_liens_tw($texte, $connect='')
 {
@@ -197,7 +200,7 @@ function expanser_liens_tw($texte, $connect='')
 	tw_expanser_un_lien('','init');
 
 	if (strpos($texte, '->') !== false)
-		$texte = preg_replace_callback (_RACCOURCI_LIEN, 'tw_expanser_un_lien',$texte);
+		$texte = preg_replace_callback (_RACCOURCI_LIEN_TW, 'tw_expanser_un_lien',$texte);
 
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['liensmatch'] += spip_timer('liensmatch', true);
 
