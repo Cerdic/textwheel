@@ -34,8 +34,8 @@ init-saut:
   priority: -40
 
 lignes-vides:
-  match: ",\n[ \t]+\n,S"
-  replace: "\n\n"
+  match: ",^[ \t]+$,"
+  replace: ""
   priority: -35 # avant les tableaux
 
 tableaux:
@@ -55,12 +55,13 @@ listes:
 
 echappe-tags:
   # voir restaure-tags plus bas
-  match: ",</?[a-z!][^<>]*([{}]|\n[_-]|--)[^<>]*>,imsS"
+  match: ",</?[a-z!][^<>]*?[{}_-][^<>]*>,msS"
   if_chars: "{}_-"
   priority: -20 # avant !paragraphes
   is_wheel: Y
   replace:
     echappe-tags-sub:
+      if_match: "/[{}]|\n[_-]|--/"
       match: ['{', '}', '_', '-']
       replace: ["\x1\x1", "\x1\x2", "\x1\x3", "\x1\x4"]
       type: str
