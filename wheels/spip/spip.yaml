@@ -34,7 +34,7 @@ init-saut:
   priority: -40
 
 lignes-vides:
-  match: ",^[ \t]+$,"
+  match: ",^[ \t]+$,m"
   replace: ""
   priority: -35 # avant les tableaux
 
