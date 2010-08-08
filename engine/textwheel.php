@@ -277,6 +277,32 @@ class TextWheel {
 		return $t;
 	}
 
+	public function compile() {
+		$rules = & $this->ruleset->getRules();
+
+		## apply each in order
+		$comp = array();
+
+		foreach ($rules as $name => $rule)
+		{
+			$this->initRule($rule);
+			$r = "/* $name */\n";
+
+			if ($rule->if_str)
+				$r .= 'if_str('.var_export($rule->if_str, true).', $t)'."\n";
+			if ($rule->if_stri)
+				$r .= 'if_stri('.var_export($rule->if_stri, true).', $t)'."\n";
+			if ($rule->if_match)
+				$r .= 'if_match('.var_export($rule->if_match, true).', $t)'."\n";
+
+			$fun = 'TextWheel::'.$rule->func_replace;
+			$r .= '$t = '.$fun.'('.var_export($rule->match, true).', '.var_export($rule->replace, true).', $t);'."\n";
+			$comp[] = $r;
+		}
+		return join ("\n", $funcs) . join ("\n", $comp);
+	}
+
+
 	/**
 	 * Get an internal global subwheel
 	 * read acces for annymous function only
@@ -521,13 +547,9 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function replace_split_cb(&$match,&$replace,&$t,&$count){
-		$a = explode($match, $t);#, -1, PREG_SPLIT_DELIM_CAPTURE);
-		$c = count($a);
-		for ($i=0; $i<$c; $i++) {
-#			if ($i%2 == 0) {
-				$a[$i] = $replace($a[$i]);
-#			}
-		}
+		$a = explode($match, $t);
+		foreach ($a as $i=>$b)
+			$a[$i] = $replace($b);
 		$t = join($match, $a);
 	}
 }
