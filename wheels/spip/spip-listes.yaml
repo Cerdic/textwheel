@@ -28,17 +28,13 @@
               type: all
               replace: tw_liste_init
               is_callback: Y
-            liste-p-item-ul:
+            liste-p-item:
               # premiere parenthese ne compte pas dans la profondeur
-              # nombre de car dans la deuxieme parenthese = profondeur
-              match: ",(\n-)([*]+)([^*].*)(?=(\z|\n-)),UsS"
-              replace: tw_liste_item_ul
-              is_callback: Y
-            liste-p-item-ol:
-              # premiere parenthese ne compte pas dans la profondeur
-              # nombre de car dans la deuxieme parenthese = profondeur
-              match: ",(\n-)([#]+)([^#].*)(?=(\z|\n-)),UsS"
-              replace: tw_liste_item_ol
+              # capture deuxieme parenthese : ul
+              # capture troisime parenthese : ol
+              # nombre de car dans la 2eme ou 3eme parenthese = profondeur
+              match: ",(\n-)(?:([*]*)|([#]*))([^*#].*)(?=(\z|\n-)),UsS"
+              replace: tw_liste_item
               is_callback: Y
             liste-p-close:
               type: all

@@ -10,15 +10,7 @@ function tw_liste_close($t){
 	return tw_liste_item($t,'close');
 }
 
-function tw_liste_item_ul($t){
-	return tw_liste_item($t,'ul');
-}
-
-function tw_liste_item_ol($t){
-	return tw_liste_item($t,'ol');
-}
-
-function tw_liste_item($t,$quoi='ul'){
+function tw_liste_item($t,$quoi='item'){
 	global $class_spip, $class_spip_plus;
 	static $niveau;
 	static $pile_li;
@@ -43,11 +35,15 @@ function tw_liste_item($t,$quoi='ul'){
 			$t .= $ajout;
 			break;
 
-		
 		case 'ul':
 		case 'ol':
+			$nouv_type = $quoi;
+			break;
+		
+		case 'item':
 		default:
-			$profond = strlen($t[2]);
+			if ($l=strlen($t[2])) {$profond=$l;$nouv_type='ul';}
+			elseif ($l=strlen($t[3])) {$profond=$l;$nouv_type='ol';}
 
 			if ($profond > 0) {
 				$ajout='';
@@ -55,7 +51,6 @@ function tw_liste_item($t,$quoi='ul'){
 				// changement de type de liste au meme niveau : il faut
 				// descendre un niveau plus bas, fermer ce niveau, et
 				// remonter
-				$nouv_type = ($quoi=='ol') ? 'ol' : 'ul';
 				$change_type = ($type AND ($type <> $nouv_type) AND ($profond == $niveau)) ? 1 : 0;
 				$type = $nouv_type;
 
@@ -93,7 +88,7 @@ function tw_liste_item($t,$quoi='ul'){
 				$ajout = $t[1];	// puce normale ou <hr>
 			}
 
-			$t = $ajout . $t[3];
+			$t = $ajout . $t[4];
 			break;
 	}
 
