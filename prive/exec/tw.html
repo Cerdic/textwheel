@@ -5,6 +5,9 @@
   Distribue sous licence GPL
 
 ]
+
+#SET{pagination,100}
+
 <style type='text/css'>
 table.spip.stats {margin:1em 0;}
 table.spip.stats tr:hover {background:white;}
@@ -40,6 +43,12 @@ $(document).ready(function(){
 		<span class='sep'>|</span>
 		<a href="[(#SELF|parametre_url{var_debug_wheel,[(#ENV{var_debug_wheel}|?{1,''})]}|parametre_url{id_article,''})]">Retour</a>
 	]
+
+	<B_a>
+	[<p class="pagination">(#PAGINATION)</p>]
+	<BOUCLE_a(ARTICLES){statut==.}{pagination #GET{pagination}}>
+	</BOUCLE_a>
+
 </p>
 
 <?php
@@ -70,7 +79,7 @@ include_spip('inc/revisions');
 
 if (_request('id_article'))
 	$w = " WHERE id_article=".intval(_request('id_article'));
-$s = spip_query('SELECT * FROM spip_articles'.$w.' LIMIT 0,1000');
+$s = spip_query('SELECT * FROM spip_articles '.$w.' ORDER BY id_article LIMIT '.intval(_request('debut_a')).',#GET{pagination}');
 
 
 // faire les inits communes
