@@ -78,7 +78,6 @@ $init = 'oh la la';
 propre($init);
 tw_propre($init);
 
-
 $erreurs = 2000;
 $success = 0;
 $nombre_statistiques = 5;
@@ -137,6 +136,9 @@ while ($t = sql_fetch($s)) {
 	}
 
 }
+
+if (!isset($tw)) die('<h3>Article inexistant</h3>');
+
 if ($erreur_open) { echo "</ul>"; }
 
 $stats = save_stats('', '', true);
