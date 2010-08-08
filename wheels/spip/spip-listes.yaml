@@ -8,10 +8,6 @@
   is_wheel: Y
   replace:
 
-    listes-prepare-para:
-      match: ",\n[ \t]+\n,S"
-      replace: "\n\n"
-
     listes-decoupe-para:
       match: "\n\n"
       type: split

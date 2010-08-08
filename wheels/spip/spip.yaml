@@ -33,6 +33,11 @@ init-saut:
   replace: "\n\0"
   priority: -40
 
+lignes-vides:
+  match: ",\n[ \t]+\n,S"
+  replace: "\n\n"
+  priority: -35 # avant les tableaux
+
 tableaux:
   type: all
   # included subwheel with relative filepath
