@@ -181,14 +181,14 @@ function tw_inc_lien_dist($lien, $texte='', $class='', $title='', $hlang='', $re
 
 	if (traiter_modeles($texte, false, $echapper ? 'TYPO' : '', $connect)==$texte){
 		$texte = typo($texte, true, $connect);
-		$lien = "<a href='$lien' class='$class'$lang$title$rel$mime>$texte</a>";
+		$lien = "<a href=\"".str_replace('"', '&quot;', $lien)."\" class='$class'$lang$title$rel$mime>$texte</a>";
 		return $lien;
 	}
 	# ceci s'execute heureusement avant les tableaux et leur "|".
 	# Attention, le texte initial est deja echappe mais pas forcement
 	# celui retourne par calculer_url.
 	# Penser au cas [<imgXX|right>->URL], qui exige typo('<a>...</a>')
-	$lien = "<a href='$lien' class='$class'$lang$title$rel$mime>$texte</a>";
+	$lien = "<a href=\"".str_replace('"', '&quot;', $lien)."\" class='$class'$lang$title$rel$mime>$texte</a>";
 	return typo($lien, true, $connect);
 }
 
