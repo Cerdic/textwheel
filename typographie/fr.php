@@ -14,11 +14,12 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
 
 // Correction typographique francaise
 
+require_once _DIR_RESTREINT.'typographie/fr.php';
+
 function typographie_fr($letexte) {
 
 	# version core
 	if (!$GLOBALS['tw']) {
-		require_once _DIR_RESTREINT.'typographie/fr.php';
 		return typographie_fr_dist($letexte);
 	}
 
