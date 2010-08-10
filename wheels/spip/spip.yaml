@@ -41,7 +41,7 @@ lignes-vides:
 tableaux:
   type: all
   # included subwheel with relative filepath
-  replace: spip-tableaux.yaml
+  replace: wheels/spip/spip-tableaux.yaml
   is_wheel: Y
   if_str: "\n|"
   priority: -30 # avant les raccourcis
@@ -50,7 +50,7 @@ listes:
   if_str: "\n-"
   is_wheel: Y
   type: all
-  replace: spip-listes.yaml
+  replace: wheels/spip/spip-listes.yaml
   priority: -20 # avant !paragraphes
 
 echappe-tags:
@@ -157,7 +157,7 @@ poesie:
   # poesie|poetry
   # utilise une callback
   match: ",<poe(sie|try)>(.*)</poe\1>,UimsS"
-  replace: spip-poesie.yaml
+  replace: wheels/spip/spip-poesie.yaml
   pick_match: 2
   is_wheel: Y
   if_str: '<poe'
