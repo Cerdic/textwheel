@@ -32,18 +32,25 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 
 		return find_in_path($file,'wheels/');
 	}
+
+	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset') {
+		# memoization
+		if (!_request('var_mode')
+		  AND function_exists('cache_get')
+		  AND $key = md5(serialize($ruleset).$callback.$class)
+		  AND $ruleset = cache_get($key))
+			return $ruleset;
+
+		$ruleset = parent::loader($ruleset, $callback, $class);
+
+		if ($key AND function_exists('cache_set'))
+			cache_set($key, $ruleset, $ttl = 3600);
+		
+		return $ruleset;
+	}
 }
 
-function traiter_raccourcis_ruleset() {
-	# memoization
-	# grml: memoization/xcache ne sait pas stocker des objets
-	if (!_request('var_mode')
-	AND function_exists('cache_get')
-	AND $key = 'tw-raccourcis-ruleset-serialized'
-	AND $ruleset = cache_get($key))
-		return $ruleset;
-
-	$ruleset = new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['raccourcis']);
+function tw_personaliser_raccourcis(&$ruleset){
 	if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('intertitres')){
 		$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_intertitre'],$rule->replace[0]);
 		$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_intertitre'],$rule->replace[1]);
@@ -68,12 +75,6 @@ function traiter_raccourcis_ruleset() {
 		$rule->disabled = true;
 		$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 	}
-
-	if (function_exists('cache_set'))
-		cache_set($key, $ruleset, $ttl = 3600);
-
-
-	return $ruleset;
 }
 
 function tw_traiter_raccourcis($letexte) {
@@ -86,7 +87,7 @@ function tw_traiter_raccourcis($letexte) {
 
 	if (!isset($wheel)) {
 		if($debug) spip_timer('init');
-		$ruleset = traiter_raccourcis_ruleset();
+		$ruleset = SPIPTextWheelRuleset::loader($GLOBALS['spip_wheels']['raccourcis'],'tw_personaliser_raccourcis');
 		$wheel = new $GLOBALS['textWheel']($ruleset);
 
 		if (_request('var_mode') == 'compile') {
@@ -128,7 +129,7 @@ function tw_echappe_js($t) {
 	static $wheel = null;
 	if (!isset($wheel))
 		$wheel = new $GLOBALS['textWheel'](
-			new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['echappe_js'])
+			SPIPTextWheelRuleset::loader($GLOBALS['spip_wheels']['echappe_js'])
 		);
 
 	return $wheel->text($t);
@@ -159,7 +160,7 @@ function tw_interdire_scripts($arg) {
 	if (isset($dejavu[$GLOBALS['filtrer_javascript']][$arg])) return $dejavu[$GLOBALS['filtrer_javascript']][$arg];
 
 	if (!isset($wheel)){
-		$ruleset = new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['interdire_scripts']);
+		$ruleset = SPIPTextWheelRuleset::loader($GLOBALS['spip_wheels']['interdire_scripts']);
 		// Pour le js, trois modes : parano (-1), prive (0), ok (1)
 		// desactiver la regle echappe-js si besoin
 		if ($GLOBALS['filtrer_javascript']==1
