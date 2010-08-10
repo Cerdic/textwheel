@@ -17,16 +17,17 @@ if (test_espace_prive ())
 $GLOBALS['spip_wheels']['interdire_scripts'] = array('spip/interdire-scripts.yaml');
 $GLOBALS['spip_wheels']['echappe_js'] = array('spip/echappe-js.yaml');
 
-function tw_traiter_raccourcis($letexte) {
-	static $wheel;
-	// Appeler les fonctions de pre_traitement
-	#$letexte = pipeline('pre_propre', $letexte);
 
-	$debug = _request('var_debug_wheel');
+function traiter_raccourcis_ruleset() {
+	# memoization
+	# grml: memoization/xcache ne sait pas stocker des objets
+	if (!_request('var_mode')
+	AND function_exists('cache_get')
+	AND $key = 'tw-raccourcis-ruleset-serialized'
+	AND $ruleset = cache_get($key)
+	AND $ruleset = @unserialize($ruleset))
+		return $ruleset;
 
-	if($debug) spip_timer('init');
-
-	if (!isset($wheel)) {
 		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
 		if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('intertitres')){
 			$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_intertitre'],$rule->replace[0]);
@@ -53,10 +54,26 @@ function tw_traiter_raccourcis($letexte) {
 			$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 		}
 
-		$wheel = new $GLOBALS['textWheel']($ruleset);
-	}
+	cache_set($key, serialize($ruleset), $ttl = 3600);
 
-	if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['init'] += spip_timer('init', true);
+
+	return $ruleset;
+}
+
+function tw_traiter_raccourcis($letexte) {
+	static $wheel;
+	// Appeler les fonctions de pre_traitement
+	#$letexte = pipeline('pre_propre', $letexte);
+
+	$debug = _request('var_debug_wheel');
+
+
+	if (!isset($wheel)) {
+		if($debug) spip_timer('init');
+		$ruleset = traiter_raccourcis_ruleset();
+		$wheel = new $GLOBALS['textWheel']($ruleset);
+		if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['init'] += spip_timer('init', true);
+	}
 
 	// Gerer les notes (ne passe pas dans le pipeline)
 	if($debug) spip_timer('notes');
