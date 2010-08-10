@@ -96,6 +96,21 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	}
 
 	/**
+	 * public static loader
+	 * can be overloaded to use memoization
+	 *
+	 * @param array $ruleset
+	 * @param string $callback
+	 * @param string $class
+	 * @return class
+	 */
+	public static function &loader($ruleset,$callback='',$class='TextWheelRuleSet'){
+		$ruleset = new $class($ruleset);
+		if ($callback)
+			$callback($ruleset);
+		return $ruleset;
+	}
+	/**
 	 * Get an existing named rule in order to override it
 	 *
 	 * @param string $name
