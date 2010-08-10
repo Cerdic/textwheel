@@ -23,6 +23,34 @@ require_once dirname(__FILE__)."/textwheelrule.php";
 abstract class TextWheelDataSet {
 	# list of data
 	protected $data = array();
+
+	/**
+	 * file finder : can be overloaded in order to use application dependant
+	 * path find method
+	 *
+	 * @param string $file
+	 * @param string $default_path
+	 * @return string
+	 */
+	protected function findFile(&$file, $path=''){
+		static $default_path;
+
+		// absolute file path ?
+		if (file_exists($file))
+			return $file;
+
+		// file embed with texwheels, relative to calling ruleset
+		if ($path AND file_exists($f = $path.$file))
+			return $f;
+
+		// textwheel default path ?
+		if (!$default_path)
+			$default_path = dirname(__FILE__).'/../';
+		if (file_exists($f = $default_path.$file))
+			return $f;
+
+		return false;
+	}
 	
 	/**
 	 * Load a yaml file describing data
@@ -30,16 +58,9 @@ abstract class TextWheelDataSet {
 	 * @return array
 	 */
 	protected function loadFile(&$file, $default_path='') {
-		if (!$default_path)
-			$default_path = dirname(__FILE__).'/../wheels/';
 		if (!preg_match(',[.]yaml$,i',$file)
-		// external rules
-		OR
-			(!file_exists($file)
-			// rules embed with texwheels
-			AND !file_exists($file = $default_path.$file)
-			)
-		)
+		  // external rules
+		  OR !$file = $this->findFile($file,$default_path))
 			return array();
 
 		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';

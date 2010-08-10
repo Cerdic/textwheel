@@ -10,12 +10,12 @@ else
 	
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
-$GLOBALS['spip_wheels']['raccourcis'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
+$GLOBALS['spip_wheels']['raccourcis'] = array('wheels/spip/spip.yaml','wheels/spip/spip-paragrapher.yaml');
 if (test_espace_prive ())
-	$GLOBALS['spip_wheels']['raccourcis'][] = 'spip/ecrire.yaml';
+	$GLOBALS['spip_wheels']['raccourcis'][] = 'wheels/spip/ecrire.yaml';
 
-$GLOBALS['spip_wheels']['interdire_scripts'] = array('spip/interdire-scripts.yaml');
-$GLOBALS['spip_wheels']['echappe_js'] = array('spip/echappe-js.yaml');
+$GLOBALS['spip_wheels']['interdire_scripts'] = array('wheels/spip/interdire-scripts.yaml');
+$GLOBALS['spip_wheels']['echappe_js'] = array('wheels/spip/echappe-js.yaml');
 
 
 function traiter_raccourcis_ruleset() {
