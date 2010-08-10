@@ -10,13 +10,29 @@ else
 	
 # usage: php wheels/spip.php
 require_once _DIR_PLUGIN_TW.'engine/textwheel.php';
-$GLOBALS['spip_wheels']['raccourcis'] = array('wheels/spip/spip.yaml','wheels/spip/spip-paragrapher.yaml');
+$GLOBALS['spip_wheels']['raccourcis'] = array('spip/spip.yaml','spip/spip-paragrapher.yaml');
 if (test_espace_prive ())
-	$GLOBALS['spip_wheels']['raccourcis'][] = 'wheels/spip/ecrire.yaml';
+	$GLOBALS['spip_wheels']['raccourcis'][] = 'spip/ecrire.yaml';
 
-$GLOBALS['spip_wheels']['interdire_scripts'] = array('wheels/spip/interdire-scripts.yaml');
-$GLOBALS['spip_wheels']['echappe_js'] = array('wheels/spip/echappe-js.yaml');
+$GLOBALS['spip_wheels']['interdire_scripts'] = array('spip/interdire-scripts.yaml');
+$GLOBALS['spip_wheels']['echappe_js'] = array('spip/echappe-js.yaml');
 
+
+class SPIPTextWheelRuleset extends TextWheelRuleSet {
+	protected function findFile(&$file, $path=''){
+		static $default_path;
+
+		// absolute file path ?
+		if (file_exists($file))
+			return $file;
+
+		// file embed with texwheels, relative to calling ruleset
+		if ($path AND file_exists($f = $path.$file))
+			return $f;
+
+		return find_in_path($file,'wheels/');
+	}
+}
 
 function traiter_raccourcis_ruleset() {
 	# memoization
@@ -27,7 +43,7 @@ function traiter_raccourcis_ruleset() {
 	AND $ruleset = cache_get($key))
 		return $ruleset;
 
-	$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
+	$ruleset = new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['raccourcis']);
 	if (isset($GLOBALS['debut_intertitre']) AND $rule=$ruleset->getRule('intertitres')){
 		$rule->replace[0] = preg_replace(',<[^>]*>,Uims',$GLOBALS['debut_intertitre'],$rule->replace[0]);
 		$rule->replace[1] = preg_replace(',<[^>]*>,Uims',$GLOBALS['fin_intertitre'],$rule->replace[1]);
@@ -112,7 +128,7 @@ function tw_echappe_js($t) {
 	static $wheel = null;
 	if (!isset($wheel))
 		$wheel = new $GLOBALS['textWheel'](
-			new TextWheelRuleSet($GLOBALS['spip_wheels']['echappe_js'])
+			new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['echappe_js'])
 		);
 
 	return $wheel->text($t);
@@ -143,7 +159,7 @@ function tw_interdire_scripts($arg) {
 	if (isset($dejavu[$GLOBALS['filtrer_javascript']][$arg])) return $dejavu[$GLOBALS['filtrer_javascript']][$arg];
 
 	if (!isset($wheel)){
-		$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['interdire_scripts']);
+		$ruleset = new SPIPTextWheelRuleset($GLOBALS['spip_wheels']['interdire_scripts']);
 		// Pour le js, trois modes : parano (-1), prive (0), ok (1)
 		// desactiver la regle echappe-js si besoin
 		if ($GLOBALS['filtrer_javascript']==1
