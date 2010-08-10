@@ -24,8 +24,7 @@ function traiter_raccourcis_ruleset() {
 	if (!_request('var_mode')
 	AND function_exists('cache_get')
 	AND $key = 'tw-raccourcis-ruleset-serialized'
-	AND $ruleset = cache_get($key)
-	AND $ruleset = @unserialize($ruleset))
+	AND $ruleset = cache_get($key))
 		return $ruleset;
 
 	$ruleset = new TextWheelRuleSet($GLOBALS['spip_wheels']['raccourcis']);
@@ -54,7 +53,7 @@ function traiter_raccourcis_ruleset() {
 		$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 	}
 
-	cache_set($key, serialize($ruleset), $ttl = 3600);
+	cache_set($key, $ruleset, $ttl = 3600);
 
 
 	return $ruleset;
