@@ -106,43 +106,29 @@ abstract class TextWheelDataSet {
 		if (!$default_path)
 			$default_path = dirname(__FILE__).'/../wheels/';
 		if (!preg_match(',[.]yaml$,i',$file)
-			// external rules
-			OR
-				(!file_exists($file)
-				// rules embed with texwheels
-				AND !file_exists($file = $default_path.$file)
-				)
+		// external rules
+		OR
+			(!file_exists($file)
+			// rules embed with texwheels
+			AND !file_exists($file = $default_path.$file)
 			)
+		)
 			return array();
 
-		$data = false;
-		// yaml caching
-		if (defined('_TW_DIR_CACHE_YAML')
-			AND $hash = substr(md5($file),0,8)."-".substr(md5_file($file),0,8)
-			AND $fcache = _TW_DIR_CACHE_YAML."yaml-".basename($file,'.yaml')."-".$hash.".txt"
-			AND file_exists($fcache)
-			AND $c = file_get_contents($fcache)
-			)
-			$data = unserialize($c);
+		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
+		$dataset = sfYaml::load($file);
 
-		if (!$data){
-			require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
-			$data = sfYaml::load($file);
-		}
-
-		if (!$data)
-			return array();
+		if (is_null($dataset))
+			$dataset = array();
+#			throw new DomainException('yaml file is empty, unreadable or badly formed: '.$file.var_export($dataset,true));
 
 		// if a php file with same name exists
 		// include it as it contains callback functions
 		if ($f = preg_replace(',[.]yaml$,i','.php',$file)
-		  AND file_exists($f))
-			include_once $f;
-
-		if ($fcache AND !$c)
-		 file_put_contents ($fcache, serialize($data));
-		
-		return $data;
+		AND file_exists($f)) {
+			$dataset[] = array('require' => $f, 'priority' => -1000);
+}
+		return $dataset;
 	}
 
 }
