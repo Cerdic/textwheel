@@ -8,6 +8,7 @@
 
 -
     # nettoyer les sauts de ligne \r
+    # (semble inutile car deja dans spip.yaml#L6)
     match: ",\r\n?,S"
     replace: "\n"
 -
