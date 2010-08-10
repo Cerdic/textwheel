@@ -53,7 +53,8 @@ function traiter_raccourcis_ruleset() {
 		$ruleset->addRules(array('toujours-paragrapher'=>$rule));
 	}
 
-	cache_set($key, $ruleset, $ttl = 3600);
+	if (function_exists('cache_set'))
+		cache_set($key, $ruleset, $ttl = 3600);
 
 
 	return $ruleset;
