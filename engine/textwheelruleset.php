@@ -45,7 +45,7 @@ abstract class TextWheelDataSet {
 
 		// textwheel default path ?
 		if (!$default_path)
-			$default_path = dirname(__FILE__).'/../';
+			$default_path = dirname(__FILE__).'/../wheels/';
 		if (file_exists($f = $default_path.$file))
 			return $f;
 
@@ -162,7 +162,9 @@ class TextWheelRuleSet extends TextWheelDataSet {
 					$rules[$i] = new TextWheelRule($rule);
 				// load subwheels when necessary
 				if ($rules[$i]->is_wheel){
-					$rules[$i]->replace = new TextWheelRuleSet($rules[$i]->replace, $filepath);
+					// subruleset is of the same class as current ruleset
+					$class = get_class($this);
+					$rules[$i]->replace = new $class($rules[$i]->replace, $filepath);
 				}
 			}
 			$this->data = array_merge($this->data, $rules);
