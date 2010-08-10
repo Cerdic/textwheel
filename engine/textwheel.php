@@ -728,13 +728,19 @@ class TextWheelDebug extends TextWheel {
 
 
 
-/* stripos for php4 */
+/**
+ * stripos for php4
+ */
 if (!function_exists('stripos')) {
 	function stripos($haystack, $needle) {
 		return strpos($haystack, stristr( $haystack, $needle ));
 	}
 }
 
+/**
+ * approximation of strpbrk for php4
+ * return false if no char of $char_list is in $haystack
+ */
 if (!function_exists('strpbrk')) {
 	function strpbrk($haystack, $char_list) {
     $result = strcspn($haystack, $char_list);
