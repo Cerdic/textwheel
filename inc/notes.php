@@ -12,6 +12,9 @@
 
 if (!defined("_ECRIRE_INC_VERSION")) return;
 
+# Tests TW
+require_once _DIR_RESTREINT.'inc/notes.php';
+
 //
 // Notes de bas de page
 //
@@ -31,8 +34,8 @@ function inc_notes($arg,$operation='traiter')
 	static $marqueur = 1;
 	global $les_notes, $compt_note, $notes_vues;
 
+	# Tests TW
 	if (!$GLOBALS['tw']) {
-		require_once _DIR_RESTREINT.'inc/notes.php';
 		return inc_notes_dist($arg, $operation);
 	}
 
