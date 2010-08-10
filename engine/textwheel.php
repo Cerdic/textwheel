@@ -283,6 +283,10 @@ class TextWheel {
 		return $t;
 	}
 
+	private function export($x) {
+		return addcslashes(var_export($x, true), "\n\r\t");
+	}
+
 	public function compile() {
 		$rules = & $this->ruleset->getRules();
 
@@ -294,18 +298,23 @@ class TextWheel {
 			$this->initRule($rule);
 			$r = "/* $name */\n";
 
+			if ($rule->require)
+				$r .= 'require_once '.TextWheel::export($rule->require).';'."\n";
 			if ($rule->if_str)
-				$r .= 'if_str('.var_export($rule->if_str, true).', $t)'."\n";
+				$r .= 'if_str('.TextWheel::export($rule->if_str).', $t)'."\n";
 			if ($rule->if_stri)
-				$r .= 'if_stri('.var_export($rule->if_stri, true).', $t)'."\n";
+				$r .= 'if_stri('.TextWheel::export($rule->if_stri).', $t)'."\n";
 			if ($rule->if_match)
-				$r .= 'if_match('.var_export($rule->if_match, true).', $t)'."\n";
+				$r .= 'if_match('.TextWheel::export($rule->if_match).', $t)'."\n";
 
-			$fun = 'TextWheel::'.$rule->func_replace;
-			$r .= '$t = '.$fun.'('.var_export($rule->match, true).', '.var_export($rule->replace, true).', $t);'."\n";
+			if ($rule->func_replace !== 'replace_identity') {
+				$fun = 'TextWheel::'.$rule->func_replace;
+				$r .= '$t = '.$fun.'('.TextWheel::export($rule->match).', '.TextWheel::export($rule->replace).', $t);'."\n";
+			}
+
 			$comp[] = $r;
 		}
-		return join ("\n", $funcs) . join ("\n", $comp);
+		return join ("\n", $comp);
 	}
 
 

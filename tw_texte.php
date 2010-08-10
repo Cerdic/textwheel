@@ -71,6 +71,14 @@ function tw_traiter_raccourcis($letexte) {
 		if($debug) spip_timer('init');
 		$ruleset = traiter_raccourcis_ruleset();
 		$wheel = new $GLOBALS['textWheel']($ruleset);
+
+		if (_request('var_mode') == 'compile') {
+			echo "<pre>";
+			echo htmlspecialchars($wheel->compile());
+			echo "</pre>\n";
+			;
+		}
+
 		if($debug) $GLOBALS['totaux']['tw_traiter_raccourcis:']['init'] += spip_timer('init', true);
 	}
 
