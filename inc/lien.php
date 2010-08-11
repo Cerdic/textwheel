@@ -121,6 +121,7 @@ function expanser_liens_tw($texte, $connect='')
 
 
 function tw_expanser_un_lien($reg, $quoi='echappe'){
+	static $pile = array();
 	static $inserts;
 	static $sources;
 	static $regs;
@@ -131,6 +132,7 @@ function tw_expanser_un_lien($reg, $quoi='echappe'){
 	switch ($quoi){
 		case 'init':
 			if (!$lien) $lien = charger_fonction('lien', 'inc');
+			array_push($pile,array($inserts,$sources,$regs,$connect,$k));
 			$inserts = $sources = $regs = array();
 			$connect = $reg; // stocker le $connect pour les appels a inc_lien_dist
 			$k=0;
@@ -157,8 +159,10 @@ function tw_expanser_un_lien($reg, $quoi='echappe'){
 			return $inserts[$k++];
 			break;
 		case 'reinsert':
-			if (!count($inserts)) return $reg;
-			return str_replace($inserts, $regs, $reg);
+			if (count($inserts))
+				$reg = str_replace($inserts, $regs, $reg);
+			list($inserts,$sources,$regs,$connect,$k) = array_pop($pile);
+			return $reg;
 			break;
 		case 'sources':
 			return array($inserts, $sources);
