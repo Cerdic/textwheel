@@ -73,7 +73,7 @@ function sd($array) {
 
 
 $notes = charger_fonction('notes', 'inc');
-include_spip('tw_texte');
+include_spip('inc/texte');
 include_spip('inc/diff');
 include_spip('inc/revisions');
 
@@ -86,8 +86,10 @@ $s = spip_query('SELECT * FROM spip_articles '.$w);
 
 // faire les inits communes
 $init = 'oh la la [[avec une note ]] <doc1>';
+$GLOBALS['tw'] = false;
 propre($init);
-tw_propre($init);
+$GLOBALS['tw'] = true;
+propre($init);
 
 $erreurs = 2000;
 $success = 0;
@@ -100,18 +102,21 @@ $erreur_open = false;
 while ($t = sql_fetch($s)) {
 	
 	# tw_propre
+	$GLOBALS['tw'] = true;
 	$notes('','reset_all');
 	spip_timer('tw');
-	$tw = tw_propre($t['texte']);
+	$tw = propre($t['texte']);
 	$time_tw = spip_timer('tw',true);
 	$time_total_tw += $time_tw;
 
 	# propre
+	$GLOBALS['tw'] = false;
 	$notes('','reset_all');
 	spip_timer('propre');
 	$pr = propre($t['texte']);
 	$time_propre = spip_timer('propre',true);
 	$time_total_propre += $time_propre ;
+	$GLOBALS['tw'] = true;
 	
 	$ecart = round(100*$time_tw/$time_propre-100, 1);
 	save_stats($ecart, $t['id_article']);
