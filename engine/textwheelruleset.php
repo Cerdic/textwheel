@@ -108,8 +108,8 @@ class TextWheelRuleSet extends TextWheelDataSet {
 
 		if ($file_cache
 			AND $cache = file_get_contents($file_cache)
-			AND $ruleset = unserialize($cache))
-			return $ruleset;
+			AND $cacheruleset = unserialize($cache))
+			return $cacheruleset;
 
 		$ruleset = new $class($ruleset);
 		if ($callback)
