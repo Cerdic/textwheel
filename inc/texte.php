@@ -562,7 +562,7 @@ function tw_interdire_scripts($arg) {
 		// desactiver la regle echappe-js si besoin
 		if ($GLOBALS['filtrer_javascript']==1
 			OR ($GLOBALS['filtrer_javascript']==0 AND !test_espace_prive()))
-			$ruleset->addRules (array('echappe-js'=>array('disabled'=>true)));
+			$ruleset->addRules (array('securite-js'=>array('disabled'=>true)));
 		$wheel = new $GLOBALS['textWheel']($ruleset);
 	}
 
@@ -1172,6 +1172,7 @@ function tw_traiter_raccourcis($letexte) {
 // Filtre a appliquer aux champs du type #TEXTE*
 // http://doc.spip.org/@propre
 function propre($t, $connect=null) {
+	spip_log("propre:connect:".var_export($connect,true),"twdb");
 	if ($GLOBALS['tw']) return tw_propre($t,$connect);
 	return core_propre($t,$connect);
 }
@@ -1197,6 +1198,7 @@ function core_propre($t, $connect=null) {
 
 
 function tw_propre($t, $connect=null) {
+	spip_log("twpropre:connect:".var_export($connect,true),"twdb");
 
 	// les appels directs a cette fonction depuis le php de l'espace
 	// prive etant historiquement ecrits sans argment $connect
