@@ -53,10 +53,11 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset') {
 		# memoization
 		if (!_request('var_mode')
-		  AND function_exists('cache_get')
-		  AND $key = md5(serialize($ruleset).$callback.$class)
-		  AND $ruleset = cache_get($key))
-			return $ruleset;
+		AND function_exists('cache_get')
+		AND $key = '3'.md5(serialize($ruleset).$callback.$class)
+		AND $cacheruleset = cache_get($key)) {
+			return $cacheruleset;
+		}
 
 		$ruleset = parent::loader($ruleset, $callback, $class);
 
