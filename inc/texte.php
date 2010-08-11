@@ -50,16 +50,20 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 		return find_in_path($file,'wheels/');
 	}
 
-	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset') {
+	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset', $file_cache='') {
+		$file_cache = '';
 		# memoization
-		if (!_request('var_mode')
-		AND function_exists('cache_get')
-		AND $key = '3'.md5(serialize($ruleset).$callback.$class)
-		AND $cacheruleset = cache_get($key)) {
-			return $cacheruleset;
+		if ($key = 'r'.md5(serialize($ruleset).$callback.$class)) {
+			if (function_exists('cache_get')) {
+				if (!_request('var_mode')
+				  AND $cacheruleset = cache_get($key))
+					return $cacheruleset;
+			}
+			elseif (!_request('var_mode'))
+				$file_cache = sous_repertoire(_DIR_CACHE, 'tw')."$key.txt";
 		}
 
-		$ruleset = parent::loader($ruleset, $callback, $class);
+		$ruleset = parent::loader($ruleset, $callback, $class, $file_cache);
 
 		if ($key AND function_exists('cache_set'))
 			cache_set($key, $ruleset, $ttl = 3600);
