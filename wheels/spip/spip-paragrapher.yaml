@@ -60,7 +60,7 @@ supprimer-stop-p:
 
 suppr-para-vides:
     # Supprimer les <p xx></p> vides
-    match: ",<p [^>]*>\s*</p>\s*,uS"
+    match: ",<p [^>]*>\s*</p>\s*,S"
     replace: ""
 
 ## desormais implemente sous forme du \s* de fermer-para
