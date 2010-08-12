@@ -107,8 +107,8 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	public static function &loader($ruleset, $callback='', $class='TextWheelRuleSet', $file_cache=''){
 
 		if ($file_cache
-			AND $cache = file_get_contents($file_cache)
-			AND $cacheruleset = unserialize($cache))
+		AND $cache = @file_get_contents($file_cache)
+		AND $cacheruleset = @unserialize($cache))
 			return $cacheruleset;
 
 		$ruleset = new $class($ruleset);
@@ -116,7 +116,7 @@ class TextWheelRuleSet extends TextWheelDataSet {
 			$callback($ruleset);
 
 		if ($file_cache)
-		 file_put_contents($file_cache, serialize($ruleset));
+			file_put_contents($file_cache, serialize($ruleset));
 		
 		return $ruleset;
 	}
