@@ -55,9 +55,9 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 		# memoization
 		if ($key = 'r'.md5(serialize($ruleset).$callback.$class)) {
 			if (function_exists('cache_get')) {
-				if (!_request('var_mode')
-				  AND $cacheruleset = cache_get($key))
-					return $cacheruleset;
+			if (!_request('var_mode')
+			AND $cacheruleset = cache_get($key))
+				return $cacheruleset;
 			}
 			elseif (!_request('var_mode'))
 				$file_cache = sous_repertoire(_DIR_CACHE, 'tw')."$key.txt";
