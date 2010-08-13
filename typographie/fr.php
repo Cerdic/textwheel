@@ -44,7 +44,7 @@ function typographie_fr($letexte) {
 				$trans["\xc2\xab"] = '&#171;';
 				$trans["\xe2\x80\x9d"] = '&#8221;';
 				$trans["\xe2\x80\x9c"] = '&#8220;';
-				$trans["\xc2\xb0"] = '&#176;'
+				$trans["\xc2\xb0"] = '&#176;';
 				break;
 			default:
 				$trans["\xa0"] = '~';
