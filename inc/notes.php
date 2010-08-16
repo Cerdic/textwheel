@@ -141,7 +141,7 @@ function tw_traiter_raccourci_notes($letexte, $marqueur_notes)
 		// creer le popup 'title' sur l'appel de note
 		## attention : propre() est couteux !
 		## utiliser nettoyer_raccourcis_typo() ?
-		if ($title = supprimer_tags(propre($note_texte))) {
+		if ($title = supprimer_tags(nettoyer_raccourcis_typo($note_texte))) {
 			$title = " title='" . couper($title,80) . "'";
 		}
 

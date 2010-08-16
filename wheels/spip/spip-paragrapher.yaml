@@ -11,7 +11,7 @@ toujours-paragrapher:
     # Ajouter un <p> au debut pour assurer d'avoir toujours un paragraphe
     # anuler cette regle pour revenir a l'ancien comportement de SPIP
     type: all
-    replace: "<p>\0"
+    replace: "<p>$0"
 
 ajouter-stop-p1:
     # Ajouter un espace aux <p> et un "STOP P"
@@ -19,7 +19,7 @@ ajouter-stop-p1:
     if_str: "<"
     #if_match: ",<p\b,iS"
     match: "/^.*$/msS"
-    replace: "<p>\0<STOP P>"
+    replace: "<p>$0<STOP P>"
 
 ajouter-stop-p2:
     if_str: "<"

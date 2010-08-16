@@ -1018,8 +1018,8 @@ function traiter_poesie($letexte)
 // http://doc.spip.org/@traiter_retours_chariots
 function traiter_retours_chariots($letexte) {
 	$letexte = preg_replace(",\r\n?,S", "\n", $letexte);
-	$letexte = preg_replace(",<p[>[:space:]],iS", "\n\n\\0", $letexte);
-	$letexte = preg_replace(",</p[>[:space:]],iS", "\\0\n\n", $letexte);
+	$letexte = preg_replace(",<p[>[:space:]],iS", "\n\n$0", $letexte);
+	$letexte = preg_replace(",</p[>[:space:]],iS", "$0\n\n", $letexte);
 	return $letexte;
 }
 

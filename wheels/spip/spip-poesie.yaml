@@ -23,5 +23,5 @@
 -
     # entourer avec un blockquote.spip_poesie
     type: all
-    replace: "<blockquote class=\"spip_poesie\">\n\n<div>\0</div>\n</blockquote>\n\n"
+    replace: "<blockquote class=\"spip_poesie\">\n\n<div>$0</div>\n</blockquote>\n\n"
 

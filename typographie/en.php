@@ -53,10 +53,10 @@ function typographie_en($letexte) {
 	if($debug) spip_timer('cherche1');
 
 	/* 2 */
-	$letexte = preg_replace('/ --?,|(?: %)(?:\W|$)/S', '~\0', $letexte);
+	$letexte = preg_replace('/ --?,|(?: %)(?:\W|$)/S', '~$0', $letexte);
 
 	/* 4 */
-	$letexte = preg_replace('/Mr\.? /S', '\0~', $letexte);
+	$letexte = preg_replace('/Mr\.? /S', '$0~', $letexte);
 
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche1'] += spip_timer('cherche1', true);
 

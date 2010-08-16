@@ -22,7 +22,7 @@
           replace:
             liste-prepend:
               type: all
-              replace: "\n\0"
+              replace: "\n$0"
             liste-p-init:
               if_match: "/\n-[*#]/S"
               type: all

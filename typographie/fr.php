@@ -71,17 +71,17 @@ function typographie_fr($letexte) {
 	}
 
 	/* 2 */
-	$letexte = preg_replace('/&#187;| --?,|(?::| %)(?:\W|$)/S', '~\0', $letexte);
+	$letexte = preg_replace('/&#187;| --?,|(?::| %)(?:\W|$)/S', '~$0', $letexte);
 
 	/* 3 */
-	$letexte = preg_replace('/[!?][!?\.]*/S', "$pro~\\0", $letexte, -1, $c);
+	$letexte = preg_replace('/[!?][!?\.]*/S', "$pro~$0", $letexte, -1, $c);
 	if ($c) {
 		$letexte = preg_replace("/([\[<\(!\?\.])$pro~/S", '\1', $letexte);
 		$letexte = str_replace("$pro", '', $letexte);
 	}
 
 	/* 4 */
-	$letexte = preg_replace('/&#171;|M(?:M?\.|mes?|r\.?|&#176;) |[nN]&#176; /S', '\0~', $letexte);
+	$letexte = preg_replace('/&#171;|M(?:M?\.|mes?|r\.?|&#176;) |[nN]&#176; /S', '$0~', $letexte);
 
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['cherche1'] += spip_timer('cherche1', true);
 

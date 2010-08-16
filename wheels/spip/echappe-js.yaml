@@ -17,4 +17,4 @@
       is_callback: Y
     -
       type: all
-      replace: "<code class=\"echappe-js\">\0</code>"
+      replace: "<code class=\"echappe-js\">$0</code>"

@@ -27,7 +27,7 @@ replace_all_add:
     -
       match: "entree"
       type: all
-      replace: "\0sortie"
+      replace: "$0sortie"
   output: "Un texte de test en entreesortie"
 
 replace_all_cb:
@@ -287,6 +287,7 @@ replace_preg_cb:
     -
       match: "/te([xs])t(e?)/"
       type: preg
+      require: "tests/textwheel.php"
       replace: "test_preg_cb"
       is_callback: Y
   output: "Un x de s en entree"
@@ -345,7 +346,7 @@ split_cb:
       replace:
         -
           type: all
-          replace: '!\0!'
+          replace: '!$0!'
   output: "!U!n! texte de test e!n! e!n!tree!"
 
 split_cb_glue:

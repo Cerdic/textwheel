@@ -249,11 +249,11 @@ class TextWheel {
 	 * @param int $count
 	 */
 	protected static function replace_all(&$match,&$replace,&$t,&$count){
-		# special case: replace \0 with $t
-		#   replace: "A\0B" will surround the string with A..B
-		#   replace: "\0\0" will repeat the string
-		if (strpos($replace, '\\0')!==FALSE)
-			$t = str_replace('\\0', $t, $replace);
+		# special case: replace $0 with $t
+		#   replace: "A$0B" will surround the string with A..B
+		#   replace: "$0$0" will repeat the string
+		if (strpos($replace, '$0')!==FALSE)
+			$t = str_replace('$0', $t, $replace);
 		else
 			$t = $replace;
 	}
