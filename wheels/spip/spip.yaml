@@ -127,7 +127,7 @@ paragraphes:
   # lignes vides consecutives, br imbriques dans des p
   # mais attention pas les br trop riches (ex: br style=clear:both)
   match: ["/ *\n(?: *\n)+(?:<br ?\/?>)*/S", '/(?:<br\b[^>]*>){2,}\s*/S', "/(<p\b[^>]*>)\n*(?:<br ?\/?>\n*)+/S"]
-  replace: ['<p>', '<p>', '\1']
+  replace: ['<p>', '<p>', '$1']
   priority: 0
 
 quote:
@@ -156,7 +156,7 @@ br-restant:
 poesie:
   # poesie|poetry
   # utilise une callback
-  match: ",<poe(sie|try)>(.*)</poe\1>,UimsS"
+  match: ",<poe(sie|try)>(.*)</poe$1>,UimsS"
   replace: spip/spip-poesie.yaml
   pick_match: 2
   is_wheel: Y

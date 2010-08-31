@@ -16,7 +16,7 @@ securite-script-php:
   if_str: "<script"
   type: preg
   match: "/<(script\b[^>]+\blanguage\b[^\w>]+php\b)/UimsS"
-  replace: "&lt;\1"
+  replace: "&lt;$1"
 
 securite-js:
   if_str: "<script"

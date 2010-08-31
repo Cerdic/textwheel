@@ -67,9 +67,9 @@ function typographie_en($letexte) {
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['chercheespaces'] += spip_timer('chercheespaces', true);
 
 	if($debug) spip_timer('cherche2');
-	$letexte = preg_replace("/--([^-]|$)/S", "$pro&mdash;\\1", $letexte, -1, $c);
+	$letexte = preg_replace("/--([^-]|$)/S", "$pro&mdash;$1", $letexte, -1, $c);
 	if ($c) {
-		$letexte = preg_replace("/([-\n])$pro&mdash;/S", "\\1--", $letexte);
+		$letexte = preg_replace("/([-\n])$pro&mdash;/S", "$1--", $letexte);
 		$letexte = str_replace($pro, '', $letexte);
 	}
 

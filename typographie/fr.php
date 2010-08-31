@@ -67,7 +67,7 @@ function typographie_fr($letexte) {
 	# la typo du ; risque de clasher avec les entites &xxx;
 	if (strpos($letexte, ';') !== false) {
 		$letexte = str_replace(';', '~;', $letexte);
-		$letexte = preg_replace(',(&#?[0-9a-z]+)~;,iS', '\1;', $letexte);
+		$letexte = preg_replace(',(&#?[0-9a-z]+)~;,iS', '$1;', $letexte);
 	}
 
 	/* 2 */
@@ -76,7 +76,7 @@ function typographie_fr($letexte) {
 	/* 3 */
 	$letexte = preg_replace('/[!?][!?\.]*/S', "$pro~$0", $letexte, -1, $c);
 	if ($c) {
-		$letexte = preg_replace("/([\[<\(!\?\.])$pro~/S", '\1', $letexte);
+		$letexte = preg_replace("/([\[<\(!\?\.])$pro~/S", '$1', $letexte);
 		$letexte = str_replace("$pro", '', $letexte);
 	}
 
@@ -92,13 +92,13 @@ function typographie_fr($letexte) {
 	if($debug) $GLOBALS['totaux']['expanser_liens:']['corriger_typo:']['chercheespaces'] += spip_timer('chercheespaces', true);
 
 	if($debug) spip_timer('cherche2');
-	$letexte = preg_replace("/--([^-]|$)/S", "$pro&mdash;\\1", $letexte, -1, $c);
+	$letexte = preg_replace("/--([^-]|$)/S", "$pro&mdash;$1", $letexte, -1, $c);
 	if ($c) {
-		$letexte = preg_replace("/([-\n])$pro&mdash;/S", "\\1--", $letexte);
+		$letexte = preg_replace("/([-\n])$pro&mdash;/S", "$1--", $letexte);
 		$letexte = str_replace($pro, '', $letexte);
 	}
 
-	$letexte = preg_replace(',(https?|ftp|mailto)~((://[^"\'\s\[\]\}\)<>]+)~([?]))?,S', '\1\3\4', $letexte);
+	$letexte = preg_replace(',(https?|ftp|mailto)~((://[^"\'\s\[\]\}\)<>]+)~([?]))?,S', '$1$3$4', $letexte);
 	$letexte = str_replace('~', '&nbsp;', $letexte);
 
 

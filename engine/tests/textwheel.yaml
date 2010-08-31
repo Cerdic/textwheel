@@ -278,7 +278,7 @@ replace_preg:
     -
       match: "/te([xs])t(e?)/"
       type: preg
-      replace: "tet\2\1"
+      replace: "tet$2$1"
   output: "Un tetex de tets en entree"
 
 replace_preg_cb:
@@ -333,7 +333,7 @@ replace_default:
   ruleset:
     -
       match: "/te([xs])t(e?)/"
-      replace: "tet\2\1"
+      replace: "tet$2$1"
   output: "Un tetex de tets en entree"
 
 split_cb:

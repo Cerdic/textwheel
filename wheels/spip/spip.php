@@ -20,7 +20,7 @@ function replace_puce(){
  */
 function fermer_para_mano(&$t) {
 	# match: ",<p (.*)<(/?)(STOP P|div|pre|ul|ol|li|blockquote|h[1-6r]|t(able|[rdh]|body|foot|extarea)|form|object|center|marquee|address|d[ltd]|script|noscript|map|button|fieldset|style)\b,UimsS"
-	# replace: "\n<p "+trim(\1)+"</p>\n<\2\3"
+	# replace: "\n<p "+trim($1)+"</p>\n<$2$3"
 
 	foreach (explode('<p ', $t) as $c => $p) {
 		if ($c == 0)
