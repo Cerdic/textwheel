@@ -220,7 +220,7 @@ class sfYamlInline
       // evaluate the string
       $buffer = str_replace(array('\\n', '\\r'), array("\n", "\r"), $buffer);
 			if (strpos($buffer,'\\x')!==false){
-				$buffer = preg_replace_callback(',\\\\x([0-9]+),', create_function('$m', 'return chr($m[1]);'), $buffer);
+				$buffer = preg_replace_callback(',\\\\x([0-9a-f]+),', create_function('$m', 'return chr(hexdec($m[1]));'), $buffer);
 			}
     }
 
