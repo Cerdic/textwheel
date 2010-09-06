@@ -76,7 +76,9 @@ class sfYaml
       $content = $yaml = file_get_contents($input);
 
       // if the file contains valid PHP, process it
-      if (strpos($content, '<'.'?') !== false) {
+      if (strpos($content, '<'.'?') !== false
+      AND !(defined('_YAML_EVAL_PHP') AND !_YAML_EVAL_PHP))
+      {
         ob_start();
         $retval = eval('?'.'>'.$yaml);
         $content = ob_get_clean();

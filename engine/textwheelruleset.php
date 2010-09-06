@@ -63,6 +63,7 @@ abstract class TextWheelDataSet {
 		  OR !$file = $this->findFile($file,$default_path))
 			return array();
 
+		define('_YAML_EVAL_PHP', false);
 		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
 		$dataset = sfYaml::load($file);
 
