@@ -39,11 +39,11 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 	protected function findFile(&$file, $path=''){
 		static $default_path;
 
-		// absolute file path ?
+		// absolute file path?
 		if (file_exists($file))
 			return $file;
 
-		// file embed with texwheels, relative to calling ruleset
+		// file include with texwheels, relative to calling ruleset
 		if ($path AND file_exists($f = $path.$file))
 			return $f;
 
@@ -51,21 +51,22 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 	}
 
 	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset', $file_cache='') {
-		$file_cache = '';
+
 		# memoization
-		if ($key = 'r'.md5(serialize($ruleset).$callback.$class)) {
-			if (function_exists('cache_get')) {
+		$key = 'r'.md5(serialize($ruleset).$callback.$class);
+		if (function_exists('cache_get')) {
 			if (!_request('var_mode')
 			AND $cacheruleset = cache_get($key))
 				return $cacheruleset;
-			}
-			elseif (!_request('var_mode'))
-				$file_cache = sous_repertoire(_DIR_CACHE, 'tw')."$key.txt";
 		}
+		elseif (!_request('var_mode'))
+			$file_cache = sous_repertoire(_DIR_CACHE, 'tw')."$key.txt";
 
+		# calcul de la wheel
 		$ruleset = parent::loader($ruleset, $callback, $class, $file_cache);
 
-		if ($key AND function_exists('cache_set'))
+		# memoization
+		if (function_exists('cache_set'))
 			cache_set($key, $ruleset, $ttl = 3600);
 
 		return $ruleset;
