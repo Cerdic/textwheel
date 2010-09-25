@@ -64,8 +64,13 @@ abstract class TextWheelDataSet {
 			return array();
 
 		define('_YAML_EVAL_PHP', false);
-		require_once dirname(__FILE__).'/../lib/yaml/sfYaml.php';
-		$dataset = sfYaml::load($file);
+		if (!function_exists('yaml_decode')) {
+			if (function_exists('include_spip'))
+				include_spip('inc/yaml');
+			else
+				require_once dirname(__FILE__).'/../inc/yaml.php';
+		}
+		$dataset = yaml_decode(file_get_contents($file));
 
 		if (is_null($dataset))
 			$dataset = array();
@@ -105,20 +110,12 @@ class TextWheelRuleSet extends TextWheelDataSet {
 	 * @param string $class
 	 * @return class
 	 */
-	public static function &loader($ruleset, $callback='', $class='TextWheelRuleSet', $file_cache=''){
-
-		if ($file_cache
-		AND $cache = @file_get_contents($file_cache)
-		AND $cacheruleset = @unserialize($cache))
-			return $cacheruleset;
+	public static function &loader($ruleset, $callback='', $class='TextWheelRuleSet'){
 
 		$ruleset = new $class($ruleset);
 		if ($callback)
 			$callback($ruleset);
 
-		if ($file_cache)
-			file_put_contents($file_cache, serialize($ruleset));
-		
 		return $ruleset;
 	}
 	/**

@@ -53,21 +53,19 @@ class SPIPTextWheelRuleset extends TextWheelRuleSet {
 	public static function &loader($ruleset, $callback = '', $class = 'SPIPTextWheelRuleset', $file_cache='') {
 
 		# memoization
-		$key = 'r'.md5(serialize($ruleset).$callback.$class);
-		if (function_exists('cache_get')) {
-			if (!_request('var_mode')
-			AND $cacheruleset = cache_get($key))
-				return $cacheruleset;
-		}
-		elseif (!_request('var_mode'))
-			$file_cache = sous_repertoire(_DIR_CACHE, 'tw')."$key.txt";
+		$key = 'tw-'.md5(serialize($ruleset).$callback.$class);
+
+		# lecture du cache
+		include_spip('inc/memoization');
+		if (!_request('var_mode')
+		AND $cacheruleset = cache_get($key))
+			return $cacheruleset;
 
 		# calcul de la wheel
-		$ruleset = parent::loader($ruleset, $callback, $class, $file_cache);
+		$ruleset = parent::loader($ruleset, $callback, $class);
 
-		# memoization
-		if (function_exists('cache_set'))
-			cache_set($key, $ruleset, $ttl = 3600);
+		# ecriture du cache
+		cache_set($key, $ruleset);
 
 		return $ruleset;
 	}

@@ -1,12 +1,14 @@
 <plugin>
 	<nom>TextWheel pour SPIP</nom>
-	<auteur>Fil&amp;Cerdic</auteur>
+	<auteur>Fil &amp; Cerdic</auteur>
 	<icon></icon>
 	<licence>GNU/GPL</licence>
-	<version>0.1.0</version>
-	<etat>dev</etat>
+	<version>0.2.0</version>
+	<etat>test</etat>
 	<description>Integrer TextWheel dans SPIP</description>
 	<prefix>tw</prefix>
 	<categorie>outils</categorie>
 	<necessite id="SPIP" version="[2.1.0;]" />
+	<utilise id="yaml" version="[1.3;]" />
+	<utilise id="memoization" version="[0.9;]" />
 </plugin>
